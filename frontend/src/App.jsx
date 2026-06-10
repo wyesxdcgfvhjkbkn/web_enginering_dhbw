@@ -6,6 +6,7 @@ export default function App() {
   const initialPage = params.get("page") || "home";
 
   const [page, setPage] = useState(initialPage);
+  const [user, setUser] = useState(null);
 
   // ✅ Theme laden
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function App() {
   const renderPage = () => {
     switch (page) {
       case "login":
-        return <Login />;
+        return <Login setUser={setUser} setPage={setPage}/>;
       case "register":
         return <Register />;
       case "profile":
@@ -32,12 +33,21 @@ export default function App() {
     }
   };
 
-  return (
-    <div>
-      <Navbar setPage={setPage} />
-      <div className="container mt-4">{renderPage()}</div>
-    </div>
-  );
+  
+return (
+  <div>
+    <Navbar setPage={setPage} />
+
+    {page === "game" ? (
+      renderPage()
+    ) : (
+      <div className="container mt-4">
+        {renderPage()}
+      </div>
+    )}
+  </div>
+);
+
 }
 
 //////////////////////////////////////////////////////
@@ -50,7 +60,7 @@ function Game() {
   }, []);
 
   return (
-    <div className="container mt-3 text-center">
+    <div className="game-wrapper">
       <canvas id="game"></canvas>
     </div>
   );
@@ -59,13 +69,19 @@ function Game() {
 //////////////////////////////////////////////////////
 
 
-function Navbar({ setPage }) {
+function Navbar({ setPage, user, setUser }) {
+
   const toggleTheme = () => {
     const current = document.documentElement.getAttribute("data-theme");
     const newTheme = current === "dark" ? "light" : "dark";
 
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setPage("home");
   };
 
   return (
@@ -81,23 +97,39 @@ function Navbar({ setPage }) {
 
         <ul className="navbar-nav ms-auto d-flex flex-row gap-3">
 
-          <li>
-            <button className="btn btn-link text-white" onClick={() => setPage("profile")}>
-              Profile
-            </button>
-          </li>
+          {/* ✅ wenn NICHT eingeloggt */}
+          {!user && (
+            <>
+              <li>
+                <button className="btn btn-link text-white" onClick={() => setPage("login")}>
+                  Login
+                </button>
+              </li>
 
-          <li>
-            <button className="btn btn-link text-white" onClick={() => setPage("login")}>
-              Login
-            </button>
-          </li>
+              <li>
+                <button className="btn btn-link text-white" onClick={() => setPage("register")}>
+                  Register
+                </button>
+              </li>
+            </>
+          )}
 
-          <li>
-            <button className="btn btn-link text-white" onClick={() => setPage("register")}>
-              Register
-            </button>
-          </li>
+          {/* ✅ wenn eingeloggt */}
+          {user && (
+            <>
+              <li>
+                <button className="btn btn-link text-white" onClick={() => setPage("profile")}>
+                  Profil
+                </button>
+              </li>
+
+              <li>
+                <button className="btn btn-link text-white" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+            </>
+          )}
 
           <li>
             <button className="btn btn-link text-white" onClick={() => setPage("highscores")}>
@@ -111,7 +143,6 @@ function Navbar({ setPage }) {
             </button>
           </li>
 
-          {/* ✅ Theme wieder hier */}
           <li>
             <button className="btn btn-outline-light ms-2" onClick={toggleTheme}>
               Theme
@@ -123,7 +154,6 @@ function Navbar({ setPage }) {
     </nav>
   );
 }
-
 
 //////////////////////////////////////////////////////
 
@@ -145,7 +175,7 @@ function Home({ setPage }) {
 
 //////////////////////////////////////////////////////
 
-function Login() {
+function Login({setUser}) {
   const [form, setForm] = useState({ user: "", password: "" });
   const [error, setError] = useState("");
 
@@ -153,17 +183,21 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    if (!form.user || !form.password) {
-      setError("Bitte alle Felder ausfüllen");
-      return;
-    }
+  if (!form.user || !form.password) {
+    setError("Bitte alle Felder ausfüllen");
+    return;
+  }
 
-    console.log("Login:", form);
-    setError("");
-  };
+  // ✅ Fake-Login (für jetzt)
+  setUser({ name: form.user });
+
+  setPage("home");
+};
+
 
   return (
     <form onSubmit={handleSubmit}>
