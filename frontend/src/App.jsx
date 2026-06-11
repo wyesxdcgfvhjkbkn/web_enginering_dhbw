@@ -183,8 +183,8 @@ function Login({setUser}) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  
-const handleSubmit = (e) => {
+
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   if (!form.user || !form.password) {
@@ -192,12 +192,29 @@ const handleSubmit = (e) => {
     return;
   }
 
-  // ✅ Fake-Login (für jetzt)
-  setUser({ name: form.user });
+  try {
+    const res = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
 
-  setPage("home");
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError("Login fehlgeschlagen");
+      return;
+    }
+
+    setUser(data.user);   // ✅ wichtig
+    setPage("home");
+
+  } catch (err) {
+    setError("Server nicht erreichbar");
+  }
 };
-
 
   return (
     <form onSubmit={handleSubmit}>
@@ -248,7 +265,7 @@ function Register() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.name || !form.email || !form.password || !form.confirm) {
@@ -271,8 +288,35 @@ function Register() {
       return;
     }
 
-    console.log("Register:", form);
-    setError("");
+    
+    // ✅ NEU: Backend-Aufruf
+    try {
+      const res = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError("Registrierung fehlgeschlagen");
+        return;
+      }
+
+      // ✅ Erfolg
+      console.log("Register erfolgreich:", data);
+      setError("");
+
+    } catch (err) {
+      setError("Server nicht erreichbar");
+    }
   };
 
   return (
@@ -334,10 +378,15 @@ function Profile() {
 //////////////////////////////////////////////////////
 
 function Highscores() {
-  const data = [
-    { user: "Max", score: 1200 },
-    { user: "Anna", score: 950 },
-  ];
+  
+const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/highscore")
+      .then(res => res.json())
+      .then(setData);
+  }, []);
+
 
   return (
     <div>
