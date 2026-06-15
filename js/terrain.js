@@ -1,51 +1,86 @@
 // ===============================
-// 🌍 TILEMAP / TERRAIN RENDERER
+// 🏗️ TOWER TYPES
 // ===============================
 
-const TILE_SIZE = 128;
+const TOWER_TYPES = {
+    cannon: {
+        range: 150,
+        aimRange: 200,
+        damage: 25,
+        fireRate: 30,
+        cost: 50,
+        sprite: cannonImg,
+        projectileSpeed: 20,
+        projectileSprite: cannonProjectileImg
+    },
 
-// optional: mehrere Grass Variants möglich
-const grassTiles = [
-    grassImg
-];
+    doublecannon: {
+        range: 200,
+        aimRange: 250,
+        damage: 25,
+        fireRate: 15,
+        cost: 100,
+        sprite: doublecannonImg,
+        projectileSpeed: 20,
+        projectileSprite: doublecannonProjectileImg
+    },
 
-// ===============================
-// 🌿 GRASS RENDER
-// ===============================
+    rocket: {
+        range: 300,
+        aimRange: 350,
+        damage: 75,
+        fireRate: 60,
+        cost: 75,
+        sprite: rocketImg,
+        projectileSpeed: 5,
+        projectileSprite: rocketProjectileImg
+    },
 
-function renderGrass(ctx, canvas) {
-    for (let y = 0; y < canvas.height; y += TILE_SIZE) {
-        for (let x = 0; x < canvas.width; x += TILE_SIZE) {
-            const tile = grassTiles[0];
-            ctx.drawImage(tile, x, y, TILE_SIZE, TILE_SIZE);
-        }
+    bigrocket: {
+        range: 500,
+        aimRange: 550,
+        damage: 130,
+        fireRate: 30,
+        cost: 150,
+        sprite: bigrocketImg,
+        projectileSpeed: 4,
+        projectileSprite: bigrocketProjectileImg
     }
+};
+
+// ===============================
+// 🏗️ FACTORY
+// ===============================
+
+function createTower(type, x, y) {
+    const t = TOWER_TYPES[type];
+
+    return {
+        type,
+        x,
+        y,
+        range: t.range,
+        aimRange: t.aimRange,
+        damage: t.damage,
+        fireRate: t.fireRate,
+        cooldown: 0,
+        sprite: t.sprite,
+        projectileSpeed: t.projectileSpeed,
+        projectileSprite: t.projectileSprite
+    };
 }
 
 // ===============================
-// 🛣️ PATH RENDER
+// 🚀 PROJECTILE FACTORY
 // ===============================
 
-function renderPath(ctx, path, pathImg) {
-    for (let i = 0; i < path.length - 1; i++) {
-        const from = path[i];
-        const to = path[i + 1];
-
-        const dx = to.x - from.x;
-        const dy = to.y - from.y;
-
-        const len = Math.hypot(dx, dy);
-        const angle = Math.atan2(dy, dx);
-
-        for (let d = 0; d < len; d += 64) {
-            const x = from.x + Math.cos(angle) * d;
-            const y = from.y + Math.sin(angle) * d;
-
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle);
-            ctx.drawImage(dirtImg, -32, -32, 64, 64);
-            ctx.restore();
-        }
-    }
+function createProjectile(tower, target) {
+    return {
+        x: tower.x,
+        y: tower.y,
+        target,
+        speed: tower.projectileSpeed,
+        damage: tower.damage,
+        sprite: tower.projectileSprite
+    };
 }
