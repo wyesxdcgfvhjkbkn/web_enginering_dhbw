@@ -14,6 +14,9 @@ stoneImg.src = "assets/towerDefense_tile103.png";
 const sandImg = new Image();
 sandImg.src = "assets/towerDefense_tile241.png";
 
+const merzwegImg = new Image();
+merzwegImg.src = "assets/299470_L.png";
+
 const soldierImg = new Image();
 soldierImg.src = "assets/towerDefense_tile245.png";
 
