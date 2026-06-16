@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { startGame } from "./game";
+import { startGame, stopGame } from "./game";
 
 export default function App() {
   const params = new URLSearchParams(window.location.search);
@@ -54,10 +54,15 @@ return (
 
 
 function Game() {
-  useEffect(() => {
-    console.log("Starte Spiel...");
-    startGame();
-  }, []);
+  
+useEffect(() => {
+  startGame();
+  console.log("Starte Spiel...")
+  return () => {
+    stopGame();
+  };
+}, []);
+
 
   return (
     <div className="game-wrapper">

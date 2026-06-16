@@ -1,0 +1,165 @@
+📄 Dokumentation – Webapplikation Tower Defense
+1. Einleitung
+Im Rahmen dieses Projekts wurde eine webbasierte Anwendung zur Verwaltung und Darstellung eines Tower-Defense-Spiels entwickelt.
+Ziel war es, eine moderne Single Page Application (SPA) mit Benutzeroberfläche, Benutzerverwaltung sowie Spielintegration umzusetzen.
+Die Anwendung basiert auf React für das Frontend und kommuniziert über REST-Schnittstellen mit einem Backend-System.
+
+2. Systemarchitektur
+Die Anwendung folgt einer Client-Server-Architektur:
+2.1 Frontend
+
+Technologie: React (Vite)
+Darstellung: HTML, CSS (Bootstrap)
+Architektur: Single Page Application
+
+2.2 Backend
+
+Kommunikation über HTTP (REST API)
+Endpunkte:
+
+/login
+/register
+/highscore
+
+
+
+
+3. Implementierung der Benutzeroberfläche
+3.1 Framework
+Für die Gestaltung der Benutzeroberfläche wurde das CSS-Framework Bootstrap 5 verwendet.
+Dadurch wird ein responsives Design gewährleistet, welches sich an verschiedene Bildschirmgrößen anpasst.
+
+3.2 Navigation
+Die Anwendung besitzt eine zentrale Navigationsleiste (Navbar), die folgende Funktionen bereitstellt:
+
+Navigation zu verschiedenen Seiten:
+
+Startseite
+Login
+Registrierung
+Highscores
+Maps
+
+
+Theme-Umschaltung (Hell/Dunkel)
+Anzeige des Benutzerstatus
+
+Die Navbar wird dynamisch abhängig vom Login-Zustand angepasst:
+
+ZustandAnzeigenicht eingeloggtLogin, RegistereingeloggtProfil, Logout
+
+4. Benutzerverwaltung
+4.1 Registrierung
+Die Registrierung erfolgt über ein Formular mit folgenden Feldern:
+
+Name
+E-Mail
+Passwort
+Passwort wiederholen
+
+Validierung:
+
+Alle Felder müssen ausgefüllt sein
+E-Mail muss gültiges Format haben
+Passwort ≥ 6 Zeichen
+Passwortbestätigung muss übereinstimmen
+
+Kommunikation:
+JavaScriptfetch("http://localhost:3000/register", {  method: "POST",  headers: {    "Content-Type": "application/json",  },  body: JSON.stringify({    name,    email,    password,  }),});Weitere Zeilen anzeigen
+
+4.2 Login
+Der Login erfolgt über:
+
+Benutzername oder E-Mail
+Passwort
+
+Ablauf:
+
+Eingabe validieren
+Anfrage an Backend senden
+Benutzer im Frontend speichern (useState)
+Navigation anpassen
+
+
+4.3 Logout
+Beim Logout:
+
+Benutzer wird aus dem State entfernt
+Navigation wird zurückgesetzt
+
+
+5. Spielintegration
+5.1 Integration in React
+Das Spiel wurde als Canvas-Anwendung in React integriert.
+Umsetzung:
+JSXfunction Game() {  useEffect(() => {    startGame();  }, []);  return <canvas id="game"></canvas>;}Weitere Zeilen anzeigen
+
+5.2 Anpassung von game.js
+Das ursprüngliche Spiel wurde angepasst, um kompatibel mit React zu sein.
+Wichtig:
+
+Kein direkter Start beim Laden
+Startfunktion:
+
+JavaScriptexport function startGame() {  const canvas = document.getElementById("game");  const ctx = canvas.getContext("2d");  // Spiel-Logik}Weitere Zeilen anzeigen
+
+5.3 Fullscreen-Darstellung
+Das Spiel wird im Vollbildmodus unterhalb der Navbar dargestellt.
+CSS:
+CSS.game-wrapper {  position: fixed;  top: 56px;  width: 100%;  height: calc(100% - 56px);}``Weitere Zeilen anzeigen
+
+6. Theme-System
+Die Anwendung unterstützt ein Hell- und Dunkel-Theme.
+6.1 Umsetzung
+Verwendung von CSS-Variablen:
+CSS:root {  --bg: #ffffff;  --text: #000000;}[data-theme="dark"] {  --bg: #121212;  --text: #eaeaea;}Weitere Zeilen anzeigen
+6.2 Umschaltung
+JavaScriptdocument.documentElement.setAttribute("data-theme", newTheme);localStorage.setItem("theme", newTheme);Weitere Zeilen anzeigen
+6.3 Speicherung
+Das gewählte Theme wird im localStorage gespeichert und beim Start geladen.
+
+7. Highscore-System
+7.1 Speicherung
+Das Spiel sendet Highscores an das Backend:
+JavaScriptfetch("http://localhost:3000/highscore", {  method: "POST",  body: JSON.stringify({ user, score }),});Weitere Zeilen anzeigen
+
+7.2 Anzeige
+Highscores werden im Frontend geladen:
+JavaScriptuseEffect(() => {  fetch("http://localhost:3000/highscore")    .then(res => res.json())    .then(setData);}, []);Weitere Zeilen anzeigen
+
+8. Responsives Design
+Durch Bootstrap wird die Anwendung automatisch auf verschiedene Geräte angepasst:
+
+Desktop
+Tablet
+Smartphone
+
+Beispiel:
+HTML<div class="col-12 col-md-6"></div>Weitere Zeilen anzeigen
+
+9. Besondere Herausforderungen
+9.1 Integration von Canvas in React
+
+Problem: DOM noch nicht verfügbar
+Lösung: useEffect verwenden
+
+
+9.2 Mehrfacher Spielstart
+
+Ursache: React Strict Mode
+Lösung: Start-Flag im Spiel
+
+
+10. Fazit
+Die entwickelte Anwendung erfüllt die Anforderungen:
+✅ Moderne Single Page Application
+✅ Responsive Benutzeroberfläche mit Bootstrap
+✅ Benutzerregistrierung und Login
+✅ Integration eines Canvas-Spiels
+✅ Kommunikation mit Backend
+✅ Theme-System
+Die Architektur ist modular aufgebaut und kann leicht erweitert werden, z. B. um:
+
+JWT-Authentifizierung
+Datenbankanbindung
+Multiplayer-Funktionalität
