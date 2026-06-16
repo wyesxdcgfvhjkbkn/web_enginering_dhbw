@@ -1,6 +1,10 @@
 
 export function startGame() {
 
+    
+if (window.__gameStarted) return;
+  window.__gameStarted = true;
+
 // ===============================
 // 🎮 CANVAS SETUP
 // ===============================
@@ -254,4 +258,8 @@ function loop() {
 
 loop();
 
+}
+
+export function stopGame() {
+  window.__gameStarted = false;
 }
