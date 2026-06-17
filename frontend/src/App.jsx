@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { startGame, stopGame } from "./game";
+import { useState, useEffect, useRef } from "react";
 
 export default function App() {
   const params = new URLSearchParams(window.location.search);
@@ -54,19 +53,121 @@ return (
 
 
 function Game() {
-  
-useEffect(() => {
-  startGame();
-  console.log("Starte Spiel...")
-  return () => {
-    stopGame();
-  };
-}, []);
+  useEffect(() => {
+
+    // ✅ GLOBALER CHECK
+    if (window.__scriptsLoaded) {
+      console.log("Scripts schon geladen ✅");
+
+      // trotzdem Spiel starten
+      window.startGame?.();
+      return;
+    }
+
+    window.__scriptsLoaded = true;
+
+    const scripts = [
+      "/js/assets.js",
+      "/js/terrain.js",
+      "/js/enemies.js",
+      "/js/towers.js",
+      "/js/game.js",
+    ];
+
+    let loadedCount = 0;
+
+    scripts.forEach(src => {
+      const script = document.createElement("script");
+      script.src = src;
+
+      script.onload = () => {
+        loadedCount++;
+
+        if (loadedCount === scripts.length) {
+          console.log("Alle Scripts geladen ✅");
+
+          window.startGame?.();
+        }
+      };
+
+      document.body.appendChild(script);
+    });
+
+  }, []);
 
 
   return (
-    <div className="game-wrapper">
+    <div>
+
+      {/* 🎮 UI */}
+      <div id="ui">
+
+        <div className="ui-box">
+          ❤️ HP: <span id="hp">100</span>
+        </div>
+
+        <div className="ui-box">
+          🎯 Runde: <span id="round">1</span>
+        </div>
+
+        <div className="ui-box">
+          💰 Geld: <span id="money">100</span>
+        </div>
+
+        <button id="startWaveButton">START</button>
+
+        <div className="shop-container">
+
+          <div className="ui-box shop-button" id="shopButton">
+            🛒 Shop
+          </div>
+
+          <div className="shop-panel hidden" id="shopPanel">
+
+            <div className="shop-item" data-tower="cannon">
+              <img src="/assets/towerDefense_tile249.png" alt="Kanone" />
+              <div className="shop-text">
+                <div>Kanone</div>
+                <div className="shop-price">💰 50</div>
+              </div>
+            </div>
+
+            <div className="shop-item" data-tower="doublecannon">
+              <img src="/assets/towerDefense_tile250.png" alt="Doppelkanone" />
+              <div className="shop-text">
+                <div>Doppelkanone</div>
+                <div className="shop-price">💰 100</div>
+              </div>
+            </div>
+
+            <div className="shop-item" data-tower="rocket">
+              <img src="/assets/towerDefense_tile205.png" alt="Rakete" />
+              <div className="shop-text">
+                <div>Rakete</div>
+                <div className="shop-price">💰 75</div>
+              </div>
+            </div>
+
+            <div className="shop-item" data-tower="bigrocket">
+              <img src="/assets/towerDefense_tile206.png" alt="Große Rakete" />
+              <div className="shop-text">
+                <div>Große Rakete</div>
+                <div className="shop-price">💰 150</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* 🎮 Canvas */}
       <canvas id="game"></canvas>
+
+      {/* Credit */}
+      <div id="credit">
+        Assets by Kenney.nl
+      </div>
+
     </div>
   );
 }
