@@ -41,6 +41,7 @@ body {
 
 .navbar .btn {
   font-weight: 400 !important;
+  transition: color 0.2s ease;
 }
 
 .navbar-brand {
@@ -52,6 +53,11 @@ body {
   display: flex !important;
   flex-direction: row !important;
   gap: 1rem !important;
+}
+
+/* ✅ Farbe bei Hover */
+.navbar .btn-link:hover {
+  color: #0d6efd !important;
 }
 
 
@@ -76,11 +82,14 @@ h1, h2 {
 /* ===== Forms ===== */
 
 form {
+  width: 100%;
+  max-width: 420px;
   background: var(--card);
   color: var(--text);
   padding: 25px;
   border-radius: 10px;
   border: 1px solid var(--border);
+  margin: 0 auto;
 }
 
 /* Inputs */

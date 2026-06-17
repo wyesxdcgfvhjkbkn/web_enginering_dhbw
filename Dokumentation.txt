@@ -163,3 +163,13 @@ Die Architektur ist modular aufgebaut und kann leicht erweitert werden, z. B. 
 JWT-Authentifizierung
 Datenbankanbindung
 Multiplayer-Funktionalität
+
+
+
+Setup
+
+1. node.js installieren
+2. npm install
+3. cd frontend
+4. npm run dev
+5. http://localhost:5173/
