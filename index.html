@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>TD: Polymorph</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -19,165 +17,66 @@
 
         <!-- ❤️ Lebenspunkte -->
         <div class="ui-box">
-            ❤️ HP:
-            <span id="hp">100</span>
+            ❤️ HP: <span id="hp">100</span>
         </div>
 
         <!-- 🎯 Aktuelle Runde -->
         <div class="ui-box">
-            🎯 Runde:
-            <span id="round">1</span>
+            🎯 Runde: <span id="round">1</span>
         </div>
 
         <!-- 💰 Geld -->
         <div class="ui-box">
-            💰 Geld:
-            <span id="money">100</span>
+            💰 Geld: <span id="money">500</span>
         </div>
 
-        <!-- =========================
-             🔴 RUNDENSTART
-        ========================== -->
-        <button id="startWaveButton">
-            START
-        </button>
+        <!-- 🔴 Rundenstart -->
+        <button id="startWaveButton">START</button>
 
-        <!-- =========================
-             🛒 SHOP
-        ========================== -->
+        <!-- 🛒 Shop -->
         <div class="shop-container">
 
-            <!-- Shop Button -->
-            <div
-                class="ui-box shop-button"
-                id="shopButton">
-
+            <div class="ui-box shop-button" id="shopButton">
                 🛒 Shop
-
             </div>
 
-            <!-- Shop Dropdown -->
-            <div
-                class="shop-panel hidden"
-                id="shopPanel">
+            <div class="shop-panel hidden" id="shopPanel">
 
-                <!-- ===================
-                     🏗️ KANONE
-                ==================== -->
-                <div
-                    class="shop-item"
-                    data-tower="cannon">
-
-                    <img
-                        src="assets/towerDefense_tile249.png"
-                        alt="Kanone">
-
+                <div class="shop-item" data-tower="cannon">
+                    <img src="assets/MG.png" alt="Kanone">
                     <div class="shop-text">
-
                         <div>Kanone</div>
-
-                        <div class="shop-price">
-                            💰 50
-                        </div>
-
+                        <div class="shop-price">💰 50</div>
                     </div>
-
                 </div>
 
-                <!-- ===================
-                     🏗️ doppelKANONE
-                ==================== -->
-                <div
-                    class="shop-item"
-                    data-tower="doublecannon">
-
-                    <img
-                        src="assets/towerDefense_tile250.png"
-                        alt="Doppelkanone">
-
+                <div class="shop-item" data-tower="rocket">
+                    <img src="assets/Raketenturm.png" alt="Rakete">
                     <div class="shop-text">
-
-                        <div>Doppelkanone</div>
-
-                        <div class="shop-price">
-                            💰 100
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- ===================
-                     🚀 RAKETE
-                ==================== -->
-                <div
-                    class="shop-item"
-                    data-tower="rocket">
-
-                    <img
-                        src="assets/towerDefense_tile205.png"
-                        alt="Rakete">
-
-                    <div class="shop-text">
-
                         <div>Rakete</div>
-
-                        <div class="shop-price">
-                            💰 75
-                        </div>
-
+                        <div class="shop-price">💰 75</div>
                     </div>
-
-                </div>
-
-                <!-- ===================
-                     🚀 Große RAKETE
-                ==================== -->
-                <div
-                    class="shop-item"
-                    data-tower="bigrocket">
-
-                    <img
-                        src="assets/towerDefense_tile206.png"
-                        alt="Große Rakete">
-
-                    <div class="shop-text">
-
-                        <div>Große Rakete</div>
-
-                        <div class="shop-price">
-                            💰 150
-                        </div>
-
-                    </div>
-
                 </div>
 
             </div>
-
         </div>
 
     </div>
 
-    <!-- =====================================
-         🎮 SPIELWELT
-    ====================================== -->
+    <!-- 🎮 Spielwelt -->
     <canvas id="game"></canvas>
 
-    <!-- =====================================
-         🎨 CREDIT
-    ====================================== -->
-    <div id="credit">
-        Assets by Kenney.nl
-    </div>
+    <!-- 🎨 Credit -->
+    <div id="credit">Assets by Kenney.nl</div>
 
-    <!-- =====================================
-         📜 GAME SCRIPT
-    ====================================== -->
+    <!-- 📜 Scripts – Reihenfolge wichtig! -->
     <script src="js/assets.js"></script>
-    <script src="js/terrain.js"></script>
-    <script src="js/enemies.js"></script>
     <script src="js/towers.js"></script>
+    <script src="js/enemies.js"></script>
+    <script src="js/terrain.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/waveSystem.js"></script>
+    <script src="js/placement.js"></script>
     <script src="js/game.js"></script>
 
 </body>
