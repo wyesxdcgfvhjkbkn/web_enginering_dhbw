@@ -53,16 +53,52 @@ return (
 
 
 function Game() {
-  useEffect(() => {
+  
+useEffect(() => {
 
-    // ✅ GLOBALER CHECK
-    if (window.__scriptsLoaded) {
-      console.log("Scripts schon geladen ✅");
+  // ✅ STATE IMMER SETZEN (nicht nur im if!)
+  if (!window.state) {
+    window.state = {
+      waveRunning : false,
+      spawnTimer  : 0,
+      spawnCount  : 0,
 
-      // trotzdem Spiel starten
-      window.startGame?.();
-      return;
-    }
+      hp    : 100,
+      round : 1,
+      money : 500,
+
+      selectedTower   : null,
+      isDraggingTower : false,
+
+      mouseX : 0,
+      mouseY : 0,
+
+      towers     : [],
+      enemies    : [],
+      projectiles : [],
+
+      path: [
+        { x: 0, y: 100 },
+        { x: 100, y: 100 },
+        { x: 400, y: 100 },
+        { x: 400, y: 250 },
+        { x: 400, y: 500 },
+        { x: 200, y: 500 },
+        { x: 200, y: 250 },
+        { x: 400, y: 250 },
+        { x: 600, y: 250 },
+        { x: 800, y: 250 },
+        { x: 800, y: 100 },
+        { x: 600, y: 100 },
+        { x: 600, y: 250 },
+        { x: 600, y: 400 },
+        { x: 1350, y: 400 },
+      ]
+    };
+  }
+
+  // ✅ Scripts nur einmal laden
+  if (!window.__scriptsLoaded) {
 
     window.__scriptsLoaded = true;
 
@@ -88,13 +124,23 @@ function Game() {
 
         if (loadedCount === scripts.length) {
           console.log("Alle Scripts geladen ✅");
-
           window.startGame?.();
         }
       };
 
       document.body.appendChild(script);
     });
+
+  } else {
+    console.log("Scripts schon geladen ✅");
+    window.startGame?.();
+  }
+
+  // ✅ ✅ WICHTIG: CLEANUP (JETZT funktioniert er)
+  return () => {
+    console.log("Spiel wird gestoppt (Unmount)");
+    window.stopGame?.();
+  };
 
   }, []);
 

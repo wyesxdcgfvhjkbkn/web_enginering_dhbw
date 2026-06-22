@@ -5,6 +5,7 @@
 // ── Pfad-Kollision ────────────────────────────────────────
 
 function isOnPath(x, y) {
+    const {path} = window.state;
     for (let i = 0; i < path.length - 1; i++) {
         const a   = path[i];
         const b   = path[i + 1];
@@ -47,32 +48,34 @@ function canMerge(a, b) {
 }
 
 function mergeTowers(a, b) {
+    const state = window.state;
     const resultType = getMergeResult(a, b);
     if (!resultType) return false;
 
-    const iA = towers.indexOf(a);
-    const iB = towers.indexOf(b);
+    const iA = state.towers.indexOf(a);
+    const iB = state.towers.indexOf(b);
 
-    if (iA !== -1) towers.splice(iA, 1);
-    if (iB !== -1) towers.splice(iB, 1);
+    if (iA !== -1) state.towers.splice(iA, 1);
+    if (iB !== -1) state.towers.splice(iB, 1);
 
     const merged = createTower(resultType, (a.x + b.x) / 2, (a.y + b.y) / 2);
     if (!merged) return false;
 
-    towers.push(merged);
+    state.towers.push(merged);
     return true;
 }
 
 // ── Placement-State ───────────────────────────────────────
 
 function getPlacementState(x, y, type) {
+    const state = window.state;
     if (!TOWER_TYPES[type]) return "blocked";
     if (isOnPath(x, y))     return "blocked";
 
     let closest = null;
     let minDist = Infinity;
 
-    for (const t of towers) {
+    for (const t of state.towers) {
         const d = Math.hypot(t.x - x, t.y - y);
         if (d < minDist) { minDist = d; closest = t; }
     }
@@ -87,31 +90,32 @@ function getPlacementState(x, y, type) {
 // ── Mouse-Drop ────────────────────────────────────────────
 
 window.addEventListener("mouseup", () => {
-    if (!isDraggingTower || !selectedTower) return;
+    const gamestate = window.state;
+    if (!gamestate.isDraggingTower || !gamestate.selectedTower) return;
 
-    isDraggingTower = false;
+    gamestate.isDraggingTower = false;
 
-    const state = getPlacementState(mouseX, mouseY, selectedTower);
-    if (state === "blocked") { selectedTower = null; return; }
+    const state = getPlacementState(gamestate.mouseX, gamestate.mouseY, gamestate.selectedTower);
+    if (state === "blocked") { gamestate.selectedTower = null; return; }
 
-    const def = TOWER_TYPES[selectedTower];
-    if (!def || money < def.cost) { selectedTower = null; return; }
+    const def = TOWER_TYPES[gamestate.selectedTower];
+    if (!def || gamestate.money < def.cost) { gamestate.selectedTower = null; return; }
 
-    money -= def.cost;
+    gamestate.money -= def.cost;
     updateUI();
 
-    const newTower = createTower(selectedTower, mouseX, mouseY);
-    if (!newTower) { selectedTower = null; return; }
+    const newTower = createTower(gamestate.selectedTower, gamestate.mouseX, gamestate.mouseY);
+    if (!newTower) { gamestate.selectedTower = null; return; }
 
     if (state === "merge") {
-        for (const t of towers) {
+        for (const t of gamestate.towers) {
             if (canMerge(t, newTower) && mergeTowers(t, newTower)) {
-                selectedTower = null;
+                gamestate.selectedTower = null;
                 return;
             }
         }
     }
 
-    towers.push(newTower);
-    selectedTower = null;
+    gamestate.towers.push(newTower);
+    gamestate.selectedTower = null;
 });

@@ -17,6 +17,13 @@ function startGame() {
 // ===============================
 
 const canvas = document.getElementById("game");
+
+
+if (!canvas) {
+  console.error("Canvas NICHT gefunden!");
+  return;
+}
+
 const ctx    = canvas.getContext("2d");
 
 function resizeCanvas() {
@@ -36,46 +43,14 @@ window.addEventListener("resize", resizeCanvas);
 // ===============================
 // 🌍 GAME STATE
 // ===============================
-
-let waveRunning = false;
-let spawnTimer  = 0;
-let spawnCount  = 0;
-
-let hp    = 100;
-let round = 1;
-let money = 500;
-
-let selectedTower   = null;
-let isDraggingTower = false;
-
-let mouseX = 0;
-let mouseY = 0;
-
-const towers     = [];
-const enemies    = [];
-const projectiles = [];
+const state = window.state;
+const {enemies, towers, projectiles, hp, money, waveRunning, path} = window.state;
 
 // ===============================
 // 🗺️ PATH
 // ===============================
 
-const path = [
-    { x:    0, y: 100 },
-    { x:  100, y: 100 },
-    { x:  400, y: 100 },
-    { x:  400, y: 250 },
-    { x:  400, y: 500 },
-    { x:  200, y: 500 },
-    { x:  200, y: 250 },
-    { x:  400, y: 250 },
-    { x:  600, y: 250 },
-    { x:  800, y: 250 },
-    { x:  800, y: 100 },
-    { x:  600, y: 100 },
-    { x:  600, y: 250 },
-    { x:  600, y: 400 },
-    { x: 1350, y: 400 },
-];
+
 
 // ===============================
 // 🖱️ INPUT
@@ -83,8 +58,8 @@ const path = [
 
 canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
+    state.mouseX = e.clientX - rect.left;
+    state.mouseY = e.clientY - rect.top;
 });
 
 // ===============================
@@ -138,7 +113,7 @@ function update() {
             t.angle = t.angle + (angle - t.angle) * 0.2;
 
             if (t.cooldown <= 0 && Math.hypot(dx, dy) < t.range) {
-                projectiles.push(createProjectile(t, target));
+                state.projectiles.push(createProjectile(t, target));
                 t.cooldown = t.fireRate;
             }
         }
@@ -160,11 +135,11 @@ function update() {
 
             if (e.hp <= 0) {
                 e.dead = true;
-                money += e.reward;
+                state.money += e.reward;
                 updateUI();
             }
 
-            projectiles.splice(i, 1);
+            state.projectiles.splice(i, 1);
         } else {
             p.x += (dx / dist) * p.speed;
             p.y += (dy / dist) * p.speed;
@@ -172,15 +147,15 @@ function update() {
     }
 
     // 🧹 Cleanup + Schaden am Spieler
-    for (let i = enemies.length - 1; i >= 0; i--) {
-        const e = enemies[i];
+    for (let i = state.enemies.length - 1; i >= 0; i--) {
+        const e = state.enemies[i];
 
-        if (e.dead) { enemies.splice(i, 1); continue; }
+        if (e.dead) { state.enemies.splice(i, 1); continue; }
 
-        if (e.targetIndex >= path.length) {
-            hp -= e.damage;
+        if (e.targetIndex >= state.path.length) {
+            state.hp -= e.damage;
             updateHP();
-            enemies.splice(i, 1);
+            state.enemies.splice(i, 1);
         }
     }
 
@@ -196,15 +171,15 @@ function update() {
 // ===============================
 
 function checkGameOver() {
-    if (hp > 0) return;
+    if (state.hp > 0) return;
 
-    hp = 0;
+    state.hp = 0;
     updateHP();
-    waveRunning = false;
+    state.waveRunning = false;
 
     if (!window._gameOver) {
         window._gameOver = true;
-        setTimeout(() => alert("💀 Game Over! Runde: " + round), 100);
+        setTimeout(() => alert("💀 Game Over! Runde: " + state.round), 100);
     }
 }
 
@@ -213,6 +188,7 @@ function checkGameOver() {
 // ===============================
 
 function render() {
+    const {path, enemies, towers, projectiles, isDraggingTower, selectedTower, mouseX, mouseY} = window.state;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     renderGrass(ctx, canvas);
@@ -298,3 +274,21 @@ updateHP();
 updateRound();
 
 }
+
+function stopGame() {
+    console.log("Spiel gestoppt ❌");
+
+    // ✅ Animation stoppen
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+
+    // ✅ Restart wieder erlauben
+    started = false;
+
+    // ✅ optional: Game Over Flag reset
+    window._gameOver = false;
+}
+
+window.stopGame = stopGame;
