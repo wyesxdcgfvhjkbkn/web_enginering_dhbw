@@ -72,6 +72,9 @@ function Game() {
       "/js/enemies.js",
       "/js/towers.js",
       "/js/game.js",
+      "/js/placement.js",
+      "/js/ui.js",
+      "/js/waveSystem.js"
     ];
 
     let loadedCount = 0;

@@ -1,86 +1,61 @@
 // ===============================
-// 🏗️ TOWER TYPES
+// 🌍 TERRAIN RENDERER
 // ===============================
 
-const TOWER_TYPES = {
-    cannon: {
-        range: 150,
-        aimRange: 200,
-        damage: 25,
-        fireRate: 30,
-        cost: 50,
-        sprite: cannonImg,
-        projectileSpeed: 20,
-        projectileSprite: cannonProjectileImg
-    },
+const TILE_SIZE = 128;
 
-    doublecannon: {
-        range: 200,
-        aimRange: 250,
-        damage: 25,
-        fireRate: 15,
-        cost: 100,
-        sprite: doublecannonImg,
-        projectileSpeed: 20,
-        projectileSprite: doublecannonProjectileImg
-    },
-
-    rocket: {
-        range: 300,
-        aimRange: 350,
-        damage: 75,
-        fireRate: 60,
-        cost: 75,
-        sprite: rocketImg,
-        projectileSpeed: 5,
-        projectileSprite: rocketProjectileImg
-    },
-
-    bigrocket: {
-        range: 500,
-        aimRange: 550,
-        damage: 130,
-        fireRate: 30,
-        cost: 150,
-        sprite: bigrocketImg,
-        projectileSpeed: 4,
-        projectileSprite: bigrocketProjectileImg
+function renderGrass(ctx, canvas) {
+    for (let y = 0; y < canvas.height; y += TILE_SIZE) {
+        for (let x = 0; x < canvas.width; x += TILE_SIZE) {
+            ctx.drawImage(grassImg, x, y, TILE_SIZE, TILE_SIZE);
+        }
     }
-};
-
-// ===============================
-// 🏗️ FACTORY
-// ===============================
-
-function createTower(type, x, y) {
-    const t = TOWER_TYPES[type];
-
-    return {
-        type,
-        x,
-        y,
-        range: t.range,
-        aimRange: t.aimRange,
-        damage: t.damage,
-        fireRate: t.fireRate,
-        cooldown: 0,
-        sprite: t.sprite,
-        projectileSpeed: t.projectileSpeed,
-        projectileSprite: t.projectileSprite
-    };
 }
 
-// ===============================
-// 🚀 PROJECTILE FACTORY
-// ===============================
+function renderPath(ctx, path) {
+    const SIZE = 50;
+    const R    = SIZE / 2;
 
-function createProjectile(tower, target) {
-    return {
-        x: tower.x,
-        y: tower.y,
-        target,
-        speed: tower.projectileSpeed,
-        damage: tower.damage,
-        sprite: tower.projectileSprite
-    };
+    for (let i = 0; i < path.length - 1; i++) {
+        const a = path[i];
+        const b = path[i + 1];
+
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        const len = Math.hypot(dx, dy);
+
+        if (len === 0) continue;
+
+        const nx = dx / len;
+        const ny = dy / len;
+
+        const startX = a.x + nx * R;
+        const startY = a.y + ny * R;
+        const endX   = b.x - nx * R;
+        const endY   = b.y - ny * R;
+
+        dx = endX - startX;
+        dy = endY - startY;
+
+        const segLen = Math.hypot(dx, dy);
+        if (segLen === 0) continue;
+
+        const step  = SIZE;
+        const angle = Math.atan2(dy, dx);
+
+        for (let d = 0; d <= segLen; d += step) {
+            const x = startX + (dx / segLen) * d;
+            const y = startY + (dy / segLen) * d;
+
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.drawImage(dirtImg, -25, -25, SIZE, SIZE);
+            ctx.restore();
+        }
+    }
+
+    for (const p of path) {
+        ctx.drawImage(dirtcornerImg, p.x - 25, p.y - 25, 50, 50);
+    }
 }

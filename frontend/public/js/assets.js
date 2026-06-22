@@ -2,77 +2,40 @@
 // 🖼️ ASSETS
 // ===============================
 
-const grassImg = new Image();
-grassImg.src = "/assets/towerDefense_tile157.png";
+function loadImage(src) {
+    const img = new Image();
+    img.src = src;
+    return img;
+}
 
-const dirtImg = new Image();
-dirtImg.src = "/assets/towerDefense_tile167.png";
+// Terrain
+const grassImg           = loadImage("assets/Gras.png");
+const dirtImg            = loadImage("assets/Pfad.png");
+const dirtcornerImg      = loadImage("assets/Pfad_Ecke.png");
 
-const stoneImg = new Image();
-stoneImg.src = "/assets/towerDefense_tile103.png";
+// Enemies
+const soldierImg         = loadImage("assets/towerDefense_tile245.png");
+const juggernautImg      = loadImage("assets/towerDefense_tile246.png");
+const ninjaImg           = loadImage("assets/towerDefense_tile247.png");
+const cyborgImg          = loadImage("assets/towerDefense_tile248.png");
 
-const sandImg = new Image();
-sandImg.src = "/assets/towerDefense_tile241.png";
+// Towers
+const cannonImg          = loadImage("assets/MG.png");
+const doublecannonImg    = loadImage("assets/Doppelmg.png");
+const rocketImg          = loadImage("assets/Raketenturm.png");
+const bigrocketImg       = loadImage("assets/Großerraketenturm.png");
+const planeImg           = loadImage("assets/towerDefense_tile270.png");
+const heavyplaneImg      = loadImage("assets/towerDefense_tile271.png");
+const MBTtopImg          = loadImage("assets/Kanone.png");
+const MBTbottomImg       = loadImage("assets/towerDefense_tile268.png");
+const APCtopImg          = loadImage("assets/towerDefense_tile292.png");
+const APCbottomImg       = loadImage("assets/towerDefense_tile269.png");
+const CWISImg            = loadImage("assets/towerDefense_tile204.png");
 
-const merzwegImg = new Image();
-merzwegImg.src = "/assets/299470_L.png";
-
-const soldierImg = new Image();
-soldierImg.src = "assets/towerDefense_tile245.png";
-
-const juggernautImg = new Image();
-juggernautImg.src = "assets/towerDefense_tile246.png";
-
-const ninjaImg = new Image();
-ninjaImg.src = "assets/towerDefense_tile247.png";
-
-const cyborgImg = new Image();
-cyborgImg.src = "assets/towerDefense_tile248.png";
-
-const cannonImg = new Image();
-cannonImg.src = "assets/towerDefense_tile249.png";
-
-const doublecannonImg = new Image();
-doublecannonImg.src = "assets/towerDefense_tile250.png";
-
-const rocketImg = new Image();
-rocketImg.src = "assets/towerDefense_tile205.png";
-
-const bigrocketImg = new Image();
-bigrocketImg.src = "assets/towerDefense_tile206.png";
-
-const planeImg = new Image();
-planeImg.src = "assets/towerDefense_tile270.png";
-
-const heavyplaneImg = new Image();
-heavyplaneImg.src = "assets/towerDefense_tile271.png";
-
-const cannonProjectileImg = new Image();
-cannonProjectileImg.src = "assets/towerDefense_tile272.png";
-
-const doublecannonProjectileImg = new Image();
-doublecannonProjectileImg.src = "assets/towerDefense_tile273.png";
-
-const rocketProjectileImg = new Image();
-rocketProjectileImg.src = "assets/towerDefense_tile251.png";
-
-const bigrocketProjectileImg = new Image();
-bigrocketProjectileImg.src = "assets/towerDefense_tile252.png";
-
-
-window.assets = {
-  grassImg,
-  dirtImg,
-  stoneImg,
-  soldierImg,
-  cannonImg,
-  doublecannonImg,
-  rocketImg,
-  bigrocketImg,
-  planeImg,
-  heavyplaneImg,
-  cannonProjectileImg,
-  doublecannonProjectileImg,
-  rocketProjectileImg,
-  bigrocketProjectileImg
-};
+// Projectiles
+const cannonProjectileImg        = loadImage("assets/Bullet.png");
+const doublecannonProjectileImg  = loadImage("assets/Granate.png");
+const rocketProjectileImg        = loadImage("assets/Rakete_an1.png");
+const rocketProjectileImgalt     = loadImage("assets/Rakete_an2.png");
+const bigrocketProjectileImg     = loadImage("assets/Großerakete_an1.png");
+const bigrocketProjectilealtImg  = loadImage("assets/Großerakete_an2.png");
