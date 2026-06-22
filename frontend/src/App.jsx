@@ -217,6 +217,18 @@ useEffect(() => {
         Assets by Kenney.nl
       </div>
 
+      <div id="gameOverScreen" className="hidden">
+        <div className="gameover-box">
+          <h2 id="gameOverTitle">💀 Game Over</h2>
+          <h3 id="newHighscoreText" className="hidden rainbow-text">Neuer Highscore!</h3>
+
+          <p>Runde: <span id="finalRound"></span></p>
+          <p>Score: <span id="finalScore"></span></p>
+
+          <button id="saveScoreBtn">Highscore speichern</button>
+          <button id="restartBtn">Neustart</button>
+        </div>
+      </div>
     </div>
   );
 }

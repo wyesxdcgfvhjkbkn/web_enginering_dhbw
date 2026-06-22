@@ -182,6 +182,79 @@ html, body {
   color: inherit;
 }
 
+/* Game Over */
+
+#gameOverScreen {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 56px);
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0);
+  z-index: 9999;
+}
+
+
+.gameover-box {
+  background: var(--card);
+  color: var(--text);
+
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 300px;
+}
+
+#gameOverScreen button {
+  margin-top: 10px;
+  width: 100%;
+  color: var(--text);
+  background: var(--card);
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+.rainbow-text {
+  font-weight: bold;
+
+  background: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    blue,
+    violet,
+    red
+  );
+
+  background-size: 300%;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: rainbowMove 3s linear infinite;
+}
+
+@keyframes rainbowMove {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 300%;
+  }
+}
+
 
 /* =====================================
    🧭 UI LAYER

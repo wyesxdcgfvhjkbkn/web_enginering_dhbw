@@ -12,6 +12,31 @@ function startGame() {
   started = true;
   console.log("Spiel startet ✅");
 
+  //Reset
+  
+const state = window.state;
+
+// ✅ ALLES zurücksetzen
+state.hp = 100;
+state.round = 1;
+state.money = 500;
+
+state.waveRunning = false;
+state.spawnTimer = 0;
+state.spawnCount = 0;
+
+state.towers.length = 0;
+state.enemies.length = 0;
+state.projectiles.length = 0;
+
+// ✅ GameOver zurücksetzen
+window._gameOver = false;
+
+
+const screen = document.getElementById("gameOverScreen");
+screen?.classList.add("hidden");
+
+
 // ===============================
 // 🎮 CANVAS SETUP
 // ===============================
@@ -43,14 +68,7 @@ window.addEventListener("resize", resizeCanvas);
 // ===============================
 // 🌍 GAME STATE
 // ===============================
-const state = window.state;
 const {enemies, towers, projectiles, hp, money, waveRunning, path} = window.state;
-
-// ===============================
-// 🗺️ PATH
-// ===============================
-
-
 
 // ===============================
 // 🖱️ INPUT
@@ -173,15 +191,45 @@ function update() {
 function checkGameOver() {
     if (state.hp > 0) return;
 
-    state.hp = 0;
-    updateHP();
-    state.waveRunning = false;
 
     if (!window._gameOver) {
+        console.log("Game Over");
+        state.hp = 0;
+        updateHP();
+        state.waveRunning = false;
         window._gameOver = true;
-        setTimeout(() => alert("💀 Game Over! Runde: " + state.round), 100);
+        showGameOver();
     }
 }
+
+
+function showGameOver() {
+    
+const screen = document.getElementById("gameOverScreen");
+    const newHighscoreText = document.getElementById("newHighscoreText");
+
+    const score = state.money;
+
+    // ✅ alten Highscore laden
+    const best = parseInt(localStorage.getItem("highscore") || "0");
+
+    console.log("Score:", score, "Best:", best);
+
+    if (score > best) {
+        localStorage.setItem("highscore", score);
+
+        newHighscoreText.classList.remove("hidden");
+    } else {
+        newHighscoreText.classList.add("hidden");
+    }
+
+    document.getElementById("finalRound").textContent = state.round;
+    document.getElementById("finalScore").textContent = score;
+
+    screen.classList.remove("hidden");
+
+}
+
 
 // ===============================
 // 🎨 RENDER
@@ -264,7 +312,7 @@ function render() {
 function loop() {
     update();
     render();
-    requestAnimationFrame(loop);
+    animationId = requestAnimationFrame(loop);
 }
 
 loop();

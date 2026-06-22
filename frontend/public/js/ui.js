@@ -7,10 +7,18 @@ function initUI() {
     const shopButton = document.getElementById("shopButton");
     const shopPanel  = document.getElementById("shopPanel");
 
+    
+    if (!shopButton || !shopPanel) {
+        console.error("UI nicht gefunden!");
+        return;
+    }
+
     // 🛒 Shop Toggle
-    shopButton.addEventListener("click", () => {
+    shopButton.onclick = null;
+
+    shopButton.onclick = () => {
         shopPanel.classList.toggle("hidden");
-    });
+     };
 
     // 🏗️ Tower-Drag aus dem Shop starten
     document.querySelectorAll(".shop-item").forEach(item => {
@@ -26,6 +34,41 @@ function initUI() {
     document.getElementById("startWaveButton").addEventListener("click", () => {
         if (!state.waveRunning) startWave();
     });
+
+    // Game Over Knöpfe
+    
+    const saveBtn = document.getElementById("saveScoreBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    if (saveBtn) {
+        saveBtn.onclick = () => {
+            const score = state.money;
+
+            fetch("http://localhost:3000/highscore", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user: "TestUser", // später dynamisch!
+                score: score,
+            }),
+            });
+
+            alert("Highscore gespeichert!");
+        };
+    }
+
+    if (restartBtn) {
+        restartBtn.onclick = () => {
+            window.stopGame?.();
+            window.startGame?.();
+
+            document.getElementById("gameOverScreen").classList.add("hidden");
+        };
+    }
+
+
 }
 
 function updateUI() {
