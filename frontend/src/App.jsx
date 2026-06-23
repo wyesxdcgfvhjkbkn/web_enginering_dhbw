@@ -16,7 +16,7 @@ export default function App() {
   const renderPage = () => {
     switch (page) {
       case "login":
-        return <Login setUser={setUser} setPage={setPage}/>;
+        return <Login setUser={setUser} setPage={setPage} />;
       case "register":
         return <Register />;
       case "profile":
@@ -32,20 +32,20 @@ export default function App() {
     }
   };
 
-  
-return (
-  <div>
-    <Navbar setPage={setPage} />
 
-    {page === "game" ? (
-      renderPage()
-    ) : (
-      <div className="container mt-4">
-        {renderPage()}
-      </div>
-    )}
-  </div>
-);
+  return (
+    <div>
+      <Navbar setPage={setPage} />
+
+      {page === "game" ? (
+        renderPage()
+      ) : (
+        <div className="container mt-4">
+          {renderPage()}
+        </div>
+      )}
+    </div>
+  );
 
 }
 
@@ -53,94 +53,94 @@ return (
 
 
 function Game() {
-  
-useEffect(() => {
 
-  // ✅ STATE IMMER SETZEN (nicht nur im if!)
-  if (!window.state) {
-    window.state = {
-      waveRunning : false,
-      spawnTimer  : 0,
-      spawnCount  : 0,
+  useEffect(() => {
 
-      hp    : 100,
-      round : 1,
-      money : 500,
+    // ✅ STATE IMMER SETZEN (nicht nur im if!)
+    if (!window.state) {
+      window.state = {
+        waveRunning: false,
+        spawnTimer: 0,
+        spawnCount: 0,
 
-      selectedTower   : null,
-      isDraggingTower : false,
+        hp: 100,
+        round: 1,
+        money: 500,
 
-      mouseX : 0,
-      mouseY : 0,
+        selectedTower: null,
+        isDraggingTower: false,
 
-      towers     : [],
-      enemies    : [],
-      projectiles : [],
+        mouseX: 0,
+        mouseY: 0,
 
-      path: [
-        { x: 0, y: 100 },
-        { x: 100, y: 100 },
-        { x: 400, y: 100 },
-        { x: 400, y: 250 },
-        { x: 400, y: 500 },
-        { x: 200, y: 500 },
-        { x: 200, y: 250 },
-        { x: 400, y: 250 },
-        { x: 600, y: 250 },
-        { x: 800, y: 250 },
-        { x: 800, y: 100 },
-        { x: 600, y: 100 },
-        { x: 600, y: 250 },
-        { x: 600, y: 400 },
-        { x: 1350, y: 400 },
-      ]
-    };
-  }
+        towers: [],
+        enemies: [],
+        projectiles: [],
 
-  // ✅ Scripts nur einmal laden
-  if (!window.__scriptsLoaded) {
-
-    window.__scriptsLoaded = true;
-
-    const scripts = [
-      "/js/assets.js",
-      "/js/terrain.js",
-      "/js/enemies.js",
-      "/js/towers.js",
-      "/js/game.js",
-      "/js/placement.js",
-      "/js/ui.js",
-      "/js/waveSystem.js"
-    ];
-
-    let loadedCount = 0;
-
-    scripts.forEach(src => {
-      const script = document.createElement("script");
-      script.src = src;
-
-      script.onload = () => {
-        loadedCount++;
-
-        if (loadedCount === scripts.length) {
-          console.log("Alle Scripts geladen ✅");
-          window.startGame?.();
-        }
+        path: [
+          { x: 0, y: 100 },
+          { x: 100, y: 100 },
+          { x: 400, y: 100 },
+          { x: 400, y: 250 },
+          { x: 400, y: 500 },
+          { x: 200, y: 500 },
+          { x: 200, y: 250 },
+          { x: 400, y: 250 },
+          { x: 600, y: 250 },
+          { x: 800, y: 250 },
+          { x: 800, y: 100 },
+          { x: 600, y: 100 },
+          { x: 600, y: 250 },
+          { x: 600, y: 400 },
+          { x: 1350, y: 400 },
+        ]
       };
+    }
 
-      document.body.appendChild(script);
-    });
+    // ✅ Scripts nur einmal laden
+    if (!window.__scriptsLoaded) {
 
-  } else {
-    console.log("Scripts schon geladen ✅");
-    window.startGame?.();
-  }
+      window.__scriptsLoaded = true;
 
-  // ✅ ✅ WICHTIG: CLEANUP (JETZT funktioniert er)
-  return () => {
-    console.log("Spiel wird gestoppt (Unmount)");
-    window.stopGame?.();
-  };
+      const scripts = [
+        "/js/assets.js",
+        "/js/terrain.js",
+        "/js/enemies.js",
+        "/js/towers.js",
+        "/js/game.js",
+        "/js/placement.js",
+        "/js/ui.js",
+        "/js/waveSystem.js"
+      ];
+
+      let loadedCount = 0;
+
+      scripts.forEach(src => {
+        const script = document.createElement("script");
+        script.src = src;
+
+        script.onload = () => {
+          loadedCount++;
+
+          if (loadedCount === scripts.length) {
+            console.log("Alle Scripts geladen ✅");
+            window.startGame?.();
+          }
+        };
+
+        document.body.appendChild(script);
+      });
+
+    } else {
+      console.log("Scripts schon geladen ✅");
+      window.startGame?.();
+    }
+
+    // ✅ ✅ WICHTIG: CLEANUP (JETZT funktioniert er)
+    return () => {
+      console.log("Spiel wird gestoppt (Unmount)");
+      window.stopGame?.();
+    };
 
   }, []);
 
@@ -342,7 +342,7 @@ function Home({ setPage }) {
 
 //////////////////////////////////////////////////////
 
-function Login({setUser}) {
+function Login({ setUser }) {
   const [form, setForm] = useState({ user: "", password: "" });
   const [error, setError] = useState("");
 
@@ -351,37 +351,37 @@ function Login({setUser}) {
   };
 
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!form.user || !form.password) {
-    setError("Bitte alle Felder ausfüllen");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:3000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError("Login fehlgeschlagen");
+    if (!form.user || !form.password) {
+      setError("Bitte alle Felder ausfüllen");
       return;
     }
 
-    setUser(data.user);   // ✅ wichtig
-    setPage("home");
+    try {
+      const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-  } catch (err) {
-    setError("Server nicht erreichbar");
-  }
-};
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError("Login fehlgeschlagen");
+        return;
+      }
+
+      setUser(data.user);   // ✅ wichtig
+      setPage("home");
+
+    } catch (err) {
+      setError("Server nicht erreichbar");
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -455,7 +455,7 @@ function Register() {
       return;
     }
 
-    
+
     // ✅ NEU: Backend-Aufruf
     try {
       const res = await fetch("http://localhost:3000/register", {
@@ -500,9 +500,8 @@ function Register() {
       <input
         name="email"
         onChange={handleChange}
-        className={`form-control mb-2 ${
-          form.email && !isValidEmail(form.email) ? "is-invalid" : ""
-        }`}
+        className={`form-control mb-2 ${form.email && !isValidEmail(form.email) ? "is-invalid" : ""
+          }`}
         placeholder="E-Mail"
       />
 
@@ -545,8 +544,8 @@ function Profile() {
 //////////////////////////////////////////////////////
 
 function Highscores() {
-  
-const [data, setData] = useState([]);
+
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/highscore")

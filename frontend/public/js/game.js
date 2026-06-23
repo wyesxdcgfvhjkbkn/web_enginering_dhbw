@@ -4,322 +4,333 @@ let started = false;
 let animationId = null;
 
 function startGame() {
-  if (started) {
-    console.log("Skip – schon gestartet");
-    return;
-  }
-
-  started = true;
-  console.log("Spiel startet ✅");
-
-  //Reset
-  
-const state = window.state;
-
-// ✅ ALLES zurücksetzen
-state.hp = 100;
-state.round = 1;
-state.money = 500;
-
-state.waveRunning = false;
-state.spawnTimer = 0;
-state.spawnCount = 0;
-
-state.towers.length = 0;
-state.enemies.length = 0;
-state.projectiles.length = 0;
-
-// ✅ GameOver zurücksetzen
-window._gameOver = false;
-
-
-const screen = document.getElementById("gameOverScreen");
-screen?.classList.add("hidden");
-
-
-// ===============================
-// 🎮 CANVAS SETUP
-// ===============================
-
-const canvas = document.getElementById("game");
-
-
-if (!canvas) {
-  console.error("Canvas NICHT gefunden!");
-  return;
-}
-
-const ctx    = canvas.getContext("2d");
-
-function resizeCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-
-    canvas.width  = window.innerWidth  * dpr;
-    canvas.height = window.innerHeight * dpr;
-
-    canvas.style.width  = window.innerWidth  + "px";
-    canvas.style.height = window.innerHeight + "px";
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-// ===============================
-// 🌍 GAME STATE
-// ===============================
-const {enemies, towers, projectiles, hp, money, waveRunning, path} = window.state;
-
-// ===============================
-// 🖱️ INPUT
-// ===============================
-
-canvas.addEventListener("mousemove", (e) => {
-    const rect = canvas.getBoundingClientRect();
-    state.mouseX = e.clientX - rect.left;
-    state.mouseY = e.clientY - rect.top;
-});
-
-// ===============================
-// 🔁 UPDATE
-// ===============================
-
-function update() {
-
-    // 👾 Enemies bewegen
-    for (const e of enemies) {
-        if (e.dead) continue;
-
-        const target = path[e.targetIndex];
-        if (!target) continue;
-
-        const dx   = target.x - e.x;
-        const dy   = target.y - e.y;
-        const dist = Math.hypot(dx, dy);
-
-        e.angle = Math.atan2(dy, dx);
-
-        if (dist > 1) {
-            e.x += (dx / dist) * e.speed;
-            e.y += (dy / dist) * e.speed;
-        }
-
-        if (dist < 10) e.targetIndex++;
+    if (started) {
+        console.log("Skip – schon gestartet");
+        return;
     }
 
-    // 🏗️ Towers schießen
-    for (const t of towers) {
-        if (t.cooldown > 0) t.cooldown--;
-
-        let target      = null;
-        let maxProgress = -1;
-
-        for (const e of enemies) {
-            if (e.dead) continue;
-            const d = Math.hypot(e.x - t.x, e.y - t.y);
-            if (d < t.aimRange && e.targetIndex > maxProgress) {
-                maxProgress = e.targetIndex;
-                target = e;
-            }
+    // Wait for assets  
+    const wait = () => {
+        if (!window.allAssetsLoaded()) {
+            requestAnimationFrame(wait);
+            return;
         }
 
-        if (target) {
-            const dx    = target.x - t.x;
-            const dy    = target.y - t.y;
-            const angle = Math.atan2(dy, dx);
+        console.log("✅ Alle Assets geladen!");
+        started = true;
+        console.log("Spiel startet ✅");
 
-            t.angle = t.angle + (angle - t.angle) * 0.2;
+        // Reset
 
-            if (t.cooldown <= 0 && Math.hypot(dx, dy) < t.range) {
-                state.projectiles.push(createProjectile(t, target));
-                t.cooldown = t.fireRate;
-            }
-        }
-    }
+        const state = window.state;
 
-    // 🚀 Projectiles
-    for (let i = projectiles.length - 1; i >= 0; i--) {
-        const p = projectiles[i];
-        const e = p.target;
+        // ✅ ALLES zurücksetzen
+        state.hp = 100;
+        state.round = 1;
+        state.money = 500;
 
-        if (!e || e.dead) { projectiles.splice(i, 1); continue; }
-
-        const dx   = e.x - p.x;
-        const dy   = e.y - p.y;
-        const dist = Math.hypot(dx, dy);
-
-        if (dist < 10) {
-            e.hp -= p.damage;
-
-            if (e.hp <= 0) {
-                e.dead = true;
-                state.money += e.reward;
-                updateUI();
-            }
-
-            state.projectiles.splice(i, 1);
-        } else {
-            p.x += (dx / dist) * p.speed;
-            p.y += (dy / dist) * p.speed;
-        }
-    }
-
-    // 🧹 Cleanup + Schaden am Spieler
-    for (let i = state.enemies.length - 1; i >= 0; i--) {
-        const e = state.enemies[i];
-
-        if (e.dead) { state.enemies.splice(i, 1); continue; }
-
-        if (e.targetIndex >= state.path.length) {
-            state.hp -= e.damage;
-            updateHP();
-            state.enemies.splice(i, 1);
-        }
-    }
-
-    // 🌊 Wave-Logik
-    updateWave();
-
-    // 💀 Game Over
-    checkGameOver();
-}
-
-// ===============================
-// 💀 GAME OVER
-// ===============================
-
-function checkGameOver() {
-    if (state.hp > 0) return;
-
-
-    if (!window._gameOver) {
-        console.log("Game Over");
-        state.hp = 0;
-        updateHP();
         state.waveRunning = false;
-        window._gameOver = true;
-        showGameOver();
-    }
-}
+        state.spawnTimer = 0;
+        state.spawnCount = 0;
+
+        state.towers.length = 0;
+        state.enemies.length = 0;
+        state.projectiles.length = 0;
+
+        // ✅ GameOver zurücksetzen
+        window._gameOver = false;
+
+        const screen = document.getElementById("gameOverScreen");
+        screen?.classList.add("hidden");
 
 
-function showGameOver() {
-    
-const screen = document.getElementById("gameOverScreen");
-    const newHighscoreText = document.getElementById("newHighscoreText");
+        // ===============================
+        // 🎮 CANVAS SETUP
+        // ===============================
 
-    const score = state.money;
-
-    // ✅ alten Highscore laden
-    const best = parseInt(localStorage.getItem("highscore") || "0");
-
-    console.log("Score:", score, "Best:", best);
-
-    if (score > best) {
-        localStorage.setItem("highscore", score);
-
-        newHighscoreText.classList.remove("hidden");
-    } else {
-        newHighscoreText.classList.add("hidden");
-    }
-
-    document.getElementById("finalRound").textContent = state.round;
-    document.getElementById("finalScore").textContent = score;
-
-    screen.classList.remove("hidden");
-
-}
+        const canvas = document.getElementById("game");
 
 
-// ===============================
-// 🎨 RENDER
-// ===============================
+        if (!canvas) {
+            console.error("Canvas NICHT gefunden!");
+            return;
+        }
 
-function render() {
-    const {path, enemies, towers, projectiles, isDraggingTower, selectedTower, mouseX, mouseY} = window.state;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext("2d");
 
-    renderGrass(ctx, canvas);
-    renderPath(ctx, path);
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
 
-    // 👾 Enemies
-    for (const e of enemies) {
-        if (e.dead) continue;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
 
-        ctx.save();
-        ctx.translate(e.x, e.y);
-        ctx.rotate(e.angle);
-        ctx.drawImage(e.sprite, -64, -64, 128, 128);
-        ctx.restore();
-    }
+            canvas.style.width = window.innerWidth + "px";
+            canvas.style.height = window.innerHeight + "px";
 
-    // 🏗️ Towers
-    for (const t of towers) {
-        ctx.save();
-        ctx.translate(t.x, t.y);
-        ctx.rotate(t.angle + Math.PI / 2);
-        ctx.drawImage(t.sprite, -75, -75, 150, 150);
-        ctx.restore();
-    }
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
 
-    // 🚀 Projectiles
-   for (const p of projectiles) {
-        const ang = Math.atan2(p.target.y - p.y, p.target.x - p.x) + Math.PI / 2;
+        // ===============================
+        // 🌍 GAME STATE
+        // ===============================
+        const { enemies, towers, projectiles, hp, money, waveRunning, path } = window.state;
 
-        let sprite = p.sprite;
+        // ===============================
+        // 🖱️ INPUT
+        // ===============================
 
-        if (p.type === "rocket") {
-            if (Math.floor(Date.now() / 50) % 2 === 0) {
-                sprite = projectileSprite;
-            } else {
-                sprite = projectileSpritealt;
+        canvas.addEventListener("mousemove", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            state.mouseX = e.clientX - rect.left;
+            state.mouseY = e.clientY - rect.top;
+        });
+
+        // ===============================
+        // 🔁 UPDATE
+        // ===============================
+
+        function update() {
+
+            // 👾 Enemies bewegen
+            for (const e of enemies) {
+                if (e.dead) continue;
+
+                const target = path[e.targetIndex];
+                if (!target) continue;
+
+                const dx = target.x - e.x;
+                const dy = target.y - e.y;
+                const dist = Math.hypot(dx, dy);
+
+                e.angle = Math.atan2(dy, dx);
+
+                if (dist > 1) {
+                    e.x += (dx / dist) * e.speed;
+                    e.y += (dy / dist) * e.speed;
+                }
+
+                if (dist < 10) e.targetIndex++;
+            }
+
+            // 🏗️ Towers schießen
+            for (const t of towers) {
+                if (t.cooldown > 0) t.cooldown--;
+
+                let target = null;
+                let maxProgress = -1;
+
+                for (const e of enemies) {
+                    if (e.dead) continue;
+                    const d = Math.hypot(e.x - t.x, e.y - t.y);
+                    if (d < t.aimRange && e.targetIndex > maxProgress) {
+                        maxProgress = e.targetIndex;
+                        target = e;
+                    }
+                }
+
+                if (target) {
+                    const dx = target.x - t.x;
+                    const dy = target.y - t.y;
+                    const angle = Math.atan2(dy, dx);
+
+                    t.angle = t.angle + (angle - t.angle) * 0.2;
+
+                    if (t.cooldown <= 0 && Math.hypot(dx, dy) < t.range) {
+                        state.projectiles.push(createProjectile(t, target));
+                        t.cooldown = t.fireRate;
+                    }
+                }
+            }
+
+            // 🚀 Projectiles
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                const p = projectiles[i];
+                const e = p.target;
+
+                if (!e || e.dead) { projectiles.splice(i, 1); continue; }
+
+                const dx = e.x - p.x;
+                const dy = e.y - p.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist < 10) {
+                    e.hp -= p.damage;
+
+                    if (e.hp <= 0) {
+                        e.dead = true;
+                        state.money += e.reward;
+                        updateUI();
+                    }
+
+                    state.projectiles.splice(i, 1);
+                } else {
+                    p.x += (dx / dist) * p.speed;
+                    p.y += (dy / dist) * p.speed;
+                }
+            }
+
+            // 🧹 Cleanup + Schaden am Spieler
+            for (let i = state.enemies.length - 1; i >= 0; i--) {
+                const e = state.enemies[i];
+
+                if (e.dead) { state.enemies.splice(i, 1); continue; }
+
+                if (e.targetIndex >= state.path.length) {
+                    state.hp -= e.damage;
+                    updateHP();
+                    state.enemies.splice(i, 1);
+                }
+            }
+
+            // 🌊 Wave-Logik
+            updateWave();
+
+            // 💀 Game Over
+            checkGameOver();
+        }
+
+        // ===============================
+        // 💀 GAME OVER
+        // ===============================
+
+        function checkGameOver() {
+            if (state.hp > 0) return;
+
+
+            if (!window._gameOver) {
+                console.log("Game Over");
+                state.hp = 0;
+                updateHP();
+                state.waveRunning = false;
+                window._gameOver = true;
+                showGameOver();
             }
         }
 
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(ang);
-        ctx.drawImage(sprite, -75, -75, 150, 150);
-        ctx.restore();
-    }
 
-    // 🖱️ Drag-Preview
-    if (isDraggingTower && selectedTower) {
-        const state = getPlacementState(mouseX, mouseY, selectedTower);
-        const def   = TOWER_TYPES[selectedTower];
+        function showGameOver() {
 
-        const color =
-            state === "placeable" ? "rgba(0,255,0,0.6)" :
-            state === "merge"     ? "rgba(0,140,255,0.7)" :
-                                    "rgba(255,0,0,0.6)";
+            const screen = document.getElementById("gameOverScreen");
+            const newHighscoreText = document.getElementById("newHighscoreText");
 
-        ctx.beginPath();
-        ctx.arc(mouseX, mouseY, def.range, 0, Math.PI * 2);
-        ctx.strokeStyle = color;
-        ctx.lineWidth   = 2;
-        ctx.stroke();
+            const score = state.money;
 
-        ctx.globalAlpha = 0.5;
-        ctx.drawImage(def.sprite, mouseX - 75, mouseY - 75, 150, 150);
-        ctx.globalAlpha = 1;
-    }
-}
+            // ✅ alten Highscore laden
+            const best = parseInt(localStorage.getItem("highscore") || "0");
 
-// ===============================
-// 🔄 MAIN LOOP
-// ===============================
+            console.log("Score:", score, "Best:", best);
 
-function loop() {
-    update();
-    render();
-    animationId = requestAnimationFrame(loop);
-}
+            if (score > best) {
+                localStorage.setItem("highscore", score);
 
-loop();
-initUI();
-updateUI();
-updateHP();
-updateRound();
+                newHighscoreText.classList.remove("hidden");
+            } else {
+                newHighscoreText.classList.add("hidden");
+            }
+
+            document.getElementById("finalRound").textContent = state.round;
+            document.getElementById("finalScore").textContent = score;
+
+            screen.classList.remove("hidden");
+
+        }
+
+
+        // ===============================
+        // 🎨 RENDER
+        // ===============================
+
+        function render() {
+            const { path, enemies, towers, projectiles, isDraggingTower, selectedTower, mouseX, mouseY } = window.state;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            renderGrass(ctx, canvas);
+            renderPath(ctx, path);
+
+            // 👾 Enemies
+            for (const e of enemies) {
+                if (e.dead) continue;
+
+                ctx.save();
+                ctx.translate(e.x, e.y);
+                ctx.rotate(e.angle);
+                ctx.drawImage(e.sprite, -64, -64, 128, 128);
+                ctx.restore();
+            }
+
+            // 🏗️ Towers
+            for (const t of towers) {
+                ctx.save();
+                ctx.translate(t.x, t.y);
+                ctx.rotate(t.angle + Math.PI / 2);
+                ctx.drawImage(t.sprite, -75, -75, 150, 150);
+                ctx.restore();
+            }
+
+            // 🚀 Projectiles
+            for (const p of projectiles) {
+                const ang = Math.atan2(p.target.y - p.y, p.target.x - p.x) + Math.PI / 2;
+
+                let sprite = p.sprite;
+
+                if (p.type === "rocket") {
+                    if (Math.floor(Date.now() / 50) % 2 === 0) {
+                        sprite = projectileSprite;
+                    } else {
+                        sprite = projectileSpritealt;
+                    }
+                }
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(ang);
+                ctx.drawImage(sprite, -75, -75, 150, 150);
+                ctx.restore();
+            }
+
+            // 🖱️ Drag-Preview
+            if (isDraggingTower && selectedTower) {
+                const state = getPlacementState(mouseX, mouseY, selectedTower);
+                const def = TOWER_TYPES[selectedTower];
+
+                const color =
+                    state === "placeable" ? "rgba(0,255,0,0.6)" :
+                        state === "merge" ? "rgba(0,140,255,0.7)" :
+                            "rgba(255,0,0,0.6)";
+
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, def.range, 0, Math.PI * 2);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.globalAlpha = 0.5;
+                ctx.drawImage(def.sprite, mouseX - 75, mouseY - 75, 150, 150);
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // ===============================
+        // 🔄 MAIN LOOP
+        // ===============================
+
+        function loop() {
+            update();
+            render();
+            animationId = requestAnimationFrame(loop);
+        }
+
+        loop();
+        initUI();
+        updateUI();
+        updateHP();
+        updateRound();
+
+    };
+
+    wait();
 
 }
 
