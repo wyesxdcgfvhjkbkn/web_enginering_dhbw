@@ -274,11 +274,10 @@ body {
   border-radius: 8px;
 
   z-index: 9999;
-  /* 🔥 über allem */
+  /* über allem */
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 
   pointer-events: none;
-  /* optional: klicks gehen durch */
 
   opacity: 0;
 

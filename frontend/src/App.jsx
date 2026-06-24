@@ -258,16 +258,16 @@ function Navbar({ setPage, user, setUser, setMessage }) {
     localStorage.setItem("theme", newTheme);
   };
 
-  
-const handleLogout = () => {
-  localStorage.removeItem("user");
-  setUser(null);
-  setPage("home");
 
-  setMessage("✅ Erfolgreich ausgeloggt");
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    setPage("home");
 
-  setTimeout(() => setMessage(""), 3000);
-};
+    setMessage("✅ Erfolgreich ausgeloggt");
+
+    setTimeout(() => setMessage(""), 3000);
+  };
 
 
   return (
@@ -580,7 +580,7 @@ function Register() {
 //////////////////////////////////////////////////////
 
 function Profile({ user }) {
-  const [highscore, setHighscore] = useState(null);
+  const [highscore, setHighscore] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -589,19 +589,29 @@ function Profile({ user }) {
 
     const fetchHighscore = async () => {
       try {
+        // ✅ BACKEND TRY
         const res = await fetch(
           "http://localhost:3000/highscore?user=" + user.name
         );
 
+        if (!res.ok) throw new Error("Backend Fehler");
+
         const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error("Fehler beim Laden");
-        }
-
         setHighscore(data.score || 0);
+        console.log("✅ Backend Highscore geladen");
+
       } catch (err) {
-        setError("❌ Profil konnte nicht geladen werden");
+        console.warn("⚠️ Backend nicht erreichbar → fallback localStorage");
+
+
+        // ✅ FALLBACK
+        const localScore = parseInt(
+          localStorage.getItem("highscore") || "0"
+        );
+
+        setHighscore(localScore);
+
       } finally {
         setLoading(false);
       }
@@ -620,7 +630,7 @@ function Profile({ user }) {
     return <p>⏳ Lade Profil...</p>;
   }
 
-  // ✅ error
+  // ✅ error (optional beibehalten)
   if (error) {
     return <p className="text-danger">{error}</p>;
   }
@@ -629,8 +639,8 @@ function Profile({ user }) {
     <div>
       <h2>Profil</h2>
 
-      <p><strong>👤 Name:</strong> {user.name}</p>
-      <p><strong>🏆 Highscore:</strong> {highscore}</p>
+      <p><strong>Name:</strong> {user.name}</p>
+      <p><strong>Highscore:</strong> {highscore}</p>
     </div>
   );
 }
