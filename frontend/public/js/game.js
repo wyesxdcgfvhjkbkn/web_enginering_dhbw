@@ -211,31 +211,66 @@ function startGame() {
 
 
         function showGameOver() {
-
             const screen = document.getElementById("gameOverScreen");
             const newHighscoreText = document.getElementById("newHighscoreText");
+            const saveBtn = document.getElementById("saveScoreBtn");
 
             const score = state.money;
-
-            // ✅ alten Highscore laden
             const best = parseInt(localStorage.getItem("highscore") || "0");
-
             console.log("Score:", score, "Best:", best);
 
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            // ✅ neuer Highscore
             if (score > best) {
                 localStorage.setItem("highscore", score);
 
+                // 🌈 Text anzeigen
                 newHighscoreText.classList.remove("hidden");
+
+                if (user) {
+                    // ✅ EINGELOGGT → automatisch speichern
+
+                    saveBtn.style.display = "none";
+
+                    fetch("http://localhost:3000/highscore", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            user: user.name,
+                            score: score,
+                        }),
+                    });
+
+                    console.log("✅ Highscore automatisch gespeichert");
+
+                } else {
+                    // ❌ NICHT eingeloggt → Button anzeigen
+                    saveBtn.textContent = "Einloggen, um Highscore zu speichern";
+
+                    saveBtn.onclick = () => {
+                        window.stopGame?.();          // Spiel stoppen
+                        window.changePage?.("login"); // zur Login-Seite wechseln
+                    };
+
+                }
+
             } else {
+                // ❌ kein Highscore
+
                 newHighscoreText.classList.add("hidden");
+                saveBtn.style.display = "none";
             }
 
+            // ✅ Anzeige
             document.getElementById("finalRound").textContent = state.round;
             document.getElementById("finalScore").textContent = score;
 
             screen.classList.remove("hidden");
-
         }
+
 
 
         // ===============================

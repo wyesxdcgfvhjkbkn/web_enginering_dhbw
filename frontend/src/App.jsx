@@ -6,6 +6,7 @@ export default function App() {
 
   const [page, setPage] = useState(initialPage);
   const [user, setUser] = useState(null);
+  const [message, setMessage] = useState("");
 
   // ✅ Theme laden
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function App() {
       case "register":
         return <Register />;
       case "profile":
-        return <Profile />;
+        return <Profile user={user} />;
       case "highscores":
         return <Highscores />;
       case "maps":
@@ -32,10 +33,21 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    window.changePage = setPage;
+  }, [page]);
+
 
   return (
     <div>
-      <Navbar setPage={setPage} />
+      <Navbar setPage={setPage} user={user} setUser={setUser} setMessage={setMessage} />
+
+
+      {message && (
+        <div className="logout-toast">
+          {message}
+        </div>
+      )}
 
       {page === "game" ? (
         renderPage()
@@ -236,7 +248,7 @@ function Game() {
 //////////////////////////////////////////////////////
 
 
-function Navbar({ setPage, user, setUser }) {
+function Navbar({ setPage, user, setUser, setMessage }) {
 
   const toggleTheme = () => {
     const current = document.documentElement.getAttribute("data-theme");
@@ -246,10 +258,17 @@ function Navbar({ setPage, user, setUser }) {
     localStorage.setItem("theme", newTheme);
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setPage("home");
-  };
+  
+const handleLogout = () => {
+  localStorage.removeItem("user");
+  setUser(null);
+  setPage("home");
+
+  setMessage("✅ Erfolgreich ausgeloggt");
+
+  setTimeout(() => setMessage(""), 3000);
+};
+
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -342,7 +361,7 @@ function Home({ setPage }) {
 
 //////////////////////////////////////////////////////
 
-function Login({ setUser }) {
+function Login({ setUser, setPage }) {
   const [form, setForm] = useState({ user: "", password: "" });
   const [error, setError] = useState("");
 
@@ -403,6 +422,36 @@ function Login({ setUser }) {
       />
 
       <button className="btn btn-primary w-100">Login</button>
+
+      <p className="mt-3 text-center" style={{ fontSize: "14px" }}>
+        Noch kein Konto?{" "}
+        <span
+          style={{
+            color: "#0d6efd",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+          onClick={() => setPage("register")}
+        >
+          Registrieren
+        </span>
+      </p>
+
+      <button
+        type="button"
+        className="btn btn-outline-success w-100 mt-2"
+        onClick={() => {
+          const fakeUser = { name: "TestUser" };
+
+          localStorage.setItem("user", JSON.stringify(fakeUser));
+          setUser(fakeUser);
+
+          console.log("SET USER:", fakeUser);
+          setPage("home");
+        }}
+      >
+        🚀 Test-Login (Debug)
+      </button>
 
       <div className="text-danger mt-2">{error}</div>
     </form>
@@ -530,13 +579,58 @@ function Register() {
 
 //////////////////////////////////////////////////////
 
-function Profile() {
+function Profile({ user }) {
+  const [highscore, setHighscore] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchHighscore = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:3000/highscore?user=" + user.name
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error("Fehler beim Laden");
+        }
+
+        setHighscore(data.score || 0);
+      } catch (err) {
+        setError("❌ Profil konnte nicht geladen werden");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHighscore();
+  }, [user]);
+
+  // ✅ nicht eingeloggt
+  if (!user) {
+    return <p>❌ Bitte zuerst einloggen.</p>;
+  }
+
+  // ✅ loading
+  if (loading) {
+    return <p>⏳ Lade Profil...</p>;
+  }
+
+  // ✅ error
+  if (error) {
+    return <p className="text-danger">{error}</p>;
+  }
+
   return (
     <div>
       <h2>Profil</h2>
-      <p>Username: TestUser</p>
-      <p>Highscore: 12345</p>
-      <p>Maps erstellt: 3</p>
+
+      <p><strong>👤 Name:</strong> {user.name}</p>
+      <p><strong>🏆 Highscore:</strong> {highscore}</p>
     </div>
   );
 }

@@ -257,6 +257,54 @@ body {
   }
 }
 
+/*Alert*/
+
+.logout-toast {
+  position: fixed;
+  top: 70px;
+  /* unter Navbar */
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: #198754;
+  /* Bootstrap success */
+  color: white;
+
+  padding: 10px 20px;
+  border-radius: 8px;
+
+  z-index: 9999;
+  /* 🔥 über allem */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+
+  pointer-events: none;
+  /* optional: klicks gehen durch */
+
+  opacity: 0;
+
+  animation: fadeOnly 3s ease forwards;
+
+}
+
+@keyframes fadeOnly {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+
 
 /* =====================================
    🧭 UI LAYER
