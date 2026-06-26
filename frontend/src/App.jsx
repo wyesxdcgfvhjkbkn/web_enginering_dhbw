@@ -125,24 +125,28 @@ function Game() {
         "/js/waveSystem.js"
       ];
 
-      let loadedCount = 0;
 
-      scripts.forEach(src => {
-        const script = document.createElement("script");
-        script.src = src;
+      async function loadScriptsSequentially(scripts) {
+        for (const src of scripts) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = src;
 
-        script.onload = () => {
-          loadedCount++;
+            script.onload = resolve;
+            script.onerror = reject;
 
-          if (loadedCount === scripts.length) {
-            console.log("Alle Scripts geladen ✅");
-            window.startGame?.();
-          }
-        };
+            document.body.appendChild(script);
+          });
 
-        document.body.appendChild(script);
+          console.log("✅ geladen:", src);
+        }
+      }
+
+
+      loadScriptsSequentially(scripts).then(() => {
+        console.log("✅ Alle Scripts geladen");
+        window.startGame?.();
       });
-
     } else {
       console.log("Scripts schon geladen ✅");
       window.startGame?.();

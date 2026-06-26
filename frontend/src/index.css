@@ -176,11 +176,6 @@ html, body, #root {
   height: 100%;
 }
 
-body {
-  overflow-y: auto;
-}
-
-
 * {
   color: inherit;
 }
