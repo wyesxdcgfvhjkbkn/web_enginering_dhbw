@@ -29,6 +29,7 @@ body {
 
 .navbar {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
 .navbar .btn-link {
@@ -53,6 +54,11 @@ body {
   display: flex !important;
   flex-direction: row !important;
   gap: 1rem !important;
+
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto
+
 }
 
 /* ✅ Farbe bei Hover */
@@ -152,13 +158,17 @@ body {
 
 .game-wrapper {
   position: fixed;
-
+  top: 56px;
+  /* Höhe der Navbar (Bootstrap Standard) */
   left: 0;
+  width: 100%;
+  height: calc(100% - 56px);
 
-  width: 100vw;
-  height: calc(100vh - 56px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  overflow: hidden;
+  background: var(--bg);
 }
 
 /* ===== Canvas ===== */
@@ -172,7 +182,9 @@ body {
   background: var(--card);
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 

@@ -7,19 +7,6 @@ const game = {
     ctx: null
 };
 
-
-const canvas = document.getElementById("game");
-
-
-function resizeCanvas() {
-    if (!game.canvas) return;
-
-    const rect = game.canvas.getBoundingClientRect();
-    console.log("Funktioniert👌");
-    game.canvas.width = rect.width;
-    game.canvas.height = rect.height;
-}
-
 function startGame() {
     if (game.started) {
         console.log("Skip – schon gestartet");
@@ -79,13 +66,13 @@ function startGame() {
             return;
         }
 
+        const canvas = document.getElementById("game");
         const ctx = game.canvas.getContext("2d");
 
-        // ✅ beim Start
-        resizeCanvas();
+        const rect = game.canvas.getBoundingClientRect();
 
-        // ✅ bei Fenstergröße ändern
-        window.addEventListener("resize", resizeCanvas);
+        game.canvas.width = rect.width;
+        game.canvas.height = rect.height;
 
         // ===============================
         // 🌍 GAME STATE
@@ -405,8 +392,6 @@ function stopGame() {
         cancelAnimationFrame(game.animationId);
         game.animationId = null;
     }
-
-    window.removeEventListener("resize", resizeCanvas);
 
     game.canvas = null;
     game.ctx = null;
