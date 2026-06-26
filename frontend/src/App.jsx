@@ -158,7 +158,7 @@ function Game() {
 
 
   return (
-    <div>
+    <div className="game-wrapper">
 
       {/* 🎮 UI */}
       <div id="ui">
@@ -235,7 +235,7 @@ function Game() {
           <h3 id="newHighscoreText" className="hidden rainbow-text">Neuer Highscore!</h3>
 
           <p>Runde: <span id="finalRound"></span></p>
-          <p>Score: <span id="finalScore"></span></p>
+          <p>Geld: <span id="finalMoney"></span></p>
 
           <button id="saveScoreBtn">Highscore speichern</button>
           <button id="restartBtn">Neustart</button>
@@ -653,10 +653,23 @@ function Highscores() {
 
   useEffect(() => {
     fetch("http://localhost:3000/highscore")
-      .then(res => res.json())
-      .then(setData);
-  }, []);
+      .then(res => {
+        if (!res.ok) throw new Error("Backend down");
+        return res.json();
+      })
+      .then(setData)
+      .catch(() => {
+        console.warn("⚠️ Placeholder-Daten werden verwendet");
 
+        // ✅ Platzhalter
+        setData([
+          { user: "Guest", score: 428 },
+          { user: "Max", score: 98 },
+          { user: "Anna", score: 15 },
+          { user: "Leon", score: 13 }
+        ]);
+      });
+  }, []);
 
   return (
     <div>
@@ -664,7 +677,7 @@ function Highscores() {
       <table className="table">
         <thead>
           <tr>
-            <th>User</th>
+            <th>Spieler</th>
             <th>Score</th>
           </tr>
         </thead>

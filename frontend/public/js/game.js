@@ -1,15 +1,32 @@
 
+const game = {
+    started: false,
+    running: false,
+    animationId: null,
+    canvas: null,
+    ctx: null
+};
 
-let started = false;
-let animationId = null;
+
+const canvas = document.getElementById("game");
+
+
+function resizeCanvas() {
+    if (!game.canvas) return;
+
+    const rect = game.canvas.getBoundingClientRect();
+    console.log("Funktioniert👌");
+    game.canvas.width = rect.width;
+    game.canvas.height = rect.height;
+}
 
 function startGame() {
-    if (started) {
+    if (game.started) {
         console.log("Skip – schon gestartet");
         return;
     }
 
-    // Wait for assets  
+    // 🍵 Wait for assets  
     const wait = () => {
         if (!window.allAssetsLoaded()) {
             requestAnimationFrame(wait);
@@ -17,10 +34,13 @@ function startGame() {
         }
 
         console.log("✅ Alle Assets geladen!");
-        started = true;
+
+        game.started = true;
+        game.running = true;
+
         console.log("Spiel startet ✅");
 
-        // Reset
+        // ❎ Reset
 
         const state = window.state;
 
@@ -44,32 +64,27 @@ function startGame() {
         screen?.classList.add("hidden");
 
 
+        game.canvas = document.getElementById("game");
+        game.ctx = game.canvas.getContext("2d");
+
+
+
         // ===============================
         // 🎮 CANVAS SETUP
         // ===============================
 
-        const canvas = document.getElementById("game");
 
-
-        if (!canvas) {
+        if (!game.canvas) {
             console.error("Canvas NICHT gefunden!");
             return;
         }
 
-        const ctx = canvas.getContext("2d");
+        const ctx = game.canvas.getContext("2d");
 
-        function resizeCanvas() {
-            const dpr = window.devicePixelRatio || 1;
-
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-
-            canvas.style.width = window.innerWidth + "px";
-            canvas.style.height = window.innerHeight + "px";
-
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
+        // ✅ beim Start
         resizeCanvas();
+
+        // ✅ bei Fenstergröße ändern
         window.addEventListener("resize", resizeCanvas);
 
         // ===============================
@@ -147,7 +162,7 @@ function startGame() {
             // 🚀 Projectiles
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 const p = projectiles[i];
-                const e = p.target;
+                const e = p.target; // 🎯🎯🎯
 
                 if (!e || e.dead) { projectiles.splice(i, 1); continue; }
 
@@ -215,7 +230,7 @@ function startGame() {
             const newHighscoreText = document.getElementById("newHighscoreText");
             const saveBtn = document.getElementById("saveScoreBtn");
 
-            const score = state.money;
+            const score = state.round;
             const best = parseInt(localStorage.getItem("highscore") || "0");
             console.log("Score:", score, "Best:", best);
 
@@ -266,7 +281,7 @@ function startGame() {
 
             // ✅ Anzeige
             document.getElementById("finalRound").textContent = state.round;
-            document.getElementById("finalScore").textContent = score;
+            document.getElementById("finalMoney").textContent = state.money;
 
             screen.classList.remove("hidden");
         }
@@ -279,7 +294,14 @@ function startGame() {
 
         function render() {
             const { path, enemies, towers, projectiles, isDraggingTower, selectedTower, mouseX, mouseY } = window.state;
+
+            const ctx = game.ctx;
+            const canvas = game.canvas;
+
+            if (!ctx || !canvas) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
 
             renderGrass(ctx, canvas);
             renderPath(ctx, path);
@@ -351,11 +373,16 @@ function startGame() {
         // 🔄 MAIN LOOP
         // ===============================
 
+
         function loop() {
+            if (!game.running) return;
+
             update();
             render();
-            animationId = requestAnimationFrame(loop);
+
+            game.animationId = requestAnimationFrame(loop);
         }
+
 
         loop();
         initUI();
@@ -372,16 +399,19 @@ function startGame() {
 function stopGame() {
     console.log("Spiel gestoppt ❌");
 
-    // ✅ Animation stoppen
-    if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
+    game.running = false;
+
+    if (game.animationId) {
+        cancelAnimationFrame(game.animationId);
+        game.animationId = null;
     }
 
-    // ✅ Restart wieder erlauben
-    started = false;
+    window.removeEventListener("resize", resizeCanvas);
 
-    // ✅ optional: Game Over Flag reset
+    game.canvas = null;
+    game.ctx = null;
+
+    game.started = false;
     window._gameOver = false;
 }
 
