@@ -17,6 +17,8 @@ const TOWER_TYPES = {
         projectileSpeed:  20,
         projectileSprite: cannonProjectileImg,
         projectileType: "bullet",
+        candestroy:         ["soldier"],
+        projectileExplosion: false,
     },
 
     rocket: {
@@ -29,8 +31,9 @@ const TOWER_TYPES = {
         sprite:           rocketImg,
         projectileSpeed:  5,
         projectileSprite: rocketProjectileImg,
-        projectileSpritealt: rocketProjectileImgalt,
         projectileType: "rocket",
+        candestroy:         ["soldier", "armored"],
+        projectileExplosion: true,
     },
 
     // ── Stufe 2 (Merge aus 2× Basis) ──────────────────────
@@ -46,7 +49,9 @@ const TOWER_TYPES = {
         projectileSpeed:  20,
         projectileSprite: cannonProjectileImg,
         projectileType: "bullet",
-    },
+        candestroy:         ["soldier"],
+        projectileExplosion: false
+        },
 
     bigrocket: {             // rocket + rocket
         range:            500,
@@ -56,22 +61,26 @@ const TOWER_TYPES = {
         cost:             0,
         level:            2,
         sprite:           bigrocketImg,
-        projectileSpeed:  4,
+        projectileSpeed:  5,
         projectileSprite: bigrocketProjectileImg,
         projectileType: "rocket",
+        candestroy:         ["soldier", "armored"],
+        projectileExplosion: true,
     },
 
     CWIS: {                  // cannon + rocket
         range:            300,
         aimRange:         350,
-        damage:           50,
-        fireRate:         20,
+        damage:           25,
+        fireRate:         10,
         cost:             0,
         level:            2,
         sprite:           CWISImg,
         projectileSpeed:  12,
         projectileSprite: cannonProjectileImg,
         projectileType: "bullet",
+        candestroy:         ["soldier", "ninja"],
+        projectileExplosion: true,
     },
 
     // ── Stufe 3 (Merge aus Stufe-2 + Basis) ───────────────
@@ -87,6 +96,8 @@ const TOWER_TYPES = {
         projectileSpeed:  20,
         projectileSprite: cannonProjectileImg,
         projectileType: "bullet",
+        candestroy:         ["soldier", "armored", "ninja", "cyborg"],
+        projectileExplosion: false,
     },
 
     APC: {                   // doublecannon + rocket
@@ -100,6 +111,8 @@ const TOWER_TYPES = {
         projectileSpeed:  8,
         projectileSprite: rocketProjectileImg,
         projectileType: "rocket",
+        candestroy:         ["soldier", "armored", "ninja", "cyborg"],
+        projectileExplosion: true,
     },
 
     gunship: {               // bigrocket + cannon
@@ -113,6 +126,8 @@ const TOWER_TYPES = {
         projectileSpeed:  15,
         projectileSprite: cannonProjectileImg,
         projectileType: "bullet",
+        candestroy:         ["soldier", "armored", "ninja", "cyborg"],
+        projectileExplosion: false,
     },
 
     attackplane: {           // bigrocket + rocket
@@ -126,6 +141,8 @@ const TOWER_TYPES = {
         projectileSpeed:  6,
         projectileSprite: bigrocketProjectileImg,
         projectileType: "rocket",
+        candestroy:         ["soldier", "armored", "ninja", "cyborg"],
+        projectileExplosion: true,
     },
 };
 
@@ -140,20 +157,27 @@ function createTower(type, x, y) {
         return null;
     }
 
-    return {
+   return {
         type,
         x,
         y,
-        range:            def.range,
-        aimRange:         def.aimRange,
-        damage:           def.damage,
-        fireRate:         def.fireRate,
-        cooldown:         0,
-        angle:            0,
-        sprite:           def.sprite,
-        projectileSpeed:  def.projectileSpeed,
+
+        range: def.range,
+        aimRange: def.aimRange,
+        damage: def.damage,
+        fireRate: def.fireRate,
+
+        cooldown: 0,
+        angle: 0,
+
+        sprite: def.sprite,
+
+        projectileSpeed: def.projectileSpeed,
         projectileSprite: def.projectileSprite,
-        projectileType:   def.projectileType,
+        projectileType: def.projectileType,
+
+        candestroy: def.candestroy,
+        projectileExplosion: def.projectileExplosion,
     };
 }
 
@@ -163,11 +187,14 @@ function createTower(type, x, y) {
 
 function createProjectile(tower, target) {
     return {
-        x:      tower.x,
-        y:      tower.y,
+        x: tower.x,
+        y: tower.y,
         target,
-        speed:  tower.projectileSpeed,
+        speed: tower.projectileSpeed,
         damage: tower.damage,
         sprite: tower.projectileSprite,
+        type: tower.projectileType,
+        candestroy: tower.candestroy,
+        explodes: tower.projectileExplosion,
     };
 }
