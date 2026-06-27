@@ -40,6 +40,8 @@ let mouseY = 0;
 const towers     = [];
 const enemies    = [];
 const projectiles = [];
+const explosions = [];
+const priorityOrder = ["cyborg", "ninja", "armored", "soldier"];
 
 // ===============================
 // 🗺️ PATH
@@ -104,24 +106,51 @@ function update() {
     for (const t of towers) {
         if (t.cooldown > 0) t.cooldown--;
 
-        let target      = null;
-        let maxProgress = -1;
+        let target = null;
 
-        for (const e of enemies) {
-            if (e.dead) continue;
-            const d = Math.hypot(e.x - t.x, e.y - t.y);
-            if (d < t.aimRange && e.targetIndex > maxProgress) {
-                maxProgress = e.targetIndex;
-                target = e;
+        for (const type of priorityOrder) {
+
+            let best = null;
+            let bestProgress = -1;
+
+            for (const e of enemies) {
+
+                if (e.dead) continue;
+                if (e.type !== type) continue;
+                if (!t.candestroy.includes(e.type)) continue;
+
+                const dx = e.x - t.x;
+                const dy = e.y - t.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist > t.aimRange) continue;
+
+                if (e.targetIndex > bestProgress) {
+                    bestProgress = e.targetIndex;
+                    best = e;
+                }
+            }
+
+            if (best) {
+                target = best;
+                break;
             }
         }
+    
 
+        // 👇 NACH der kompletten Suche
         if (target) {
-            const dx    = target.x - t.x;
-            const dy    = target.y - t.y;
+
+            const dx = target.x - t.x;
+            const dy = target.y - t.y;
             const angle = Math.atan2(dy, dx);
 
-            t.angle = t.angle + (angle - t.angle) * 0.2;
+            let diff = angle - t.angle;
+
+            while (diff > Math.PI) diff -= Math.PI * 2;
+            while (diff < -Math.PI) diff += Math.PI * 2;
+
+            t.angle += diff * 0.2;
 
             if (t.cooldown <= 0 && Math.hypot(dx, dy) < t.range) {
                 projectiles.push(createProjectile(t, target));
@@ -135,7 +164,35 @@ function update() {
         const p = projectiles[i];
         const e = p.target;
 
-        if (!e || e.dead) { projectiles.splice(i, 1); continue; }
+        if (!e || e.dead) {
+
+            if (p.type === "rocket") {
+
+                let bestTarget = null;
+                let bestDist = Infinity;
+
+                for (const enemy of enemies) {
+
+                    if (enemy.dead) continue;
+                    if (!p.candestroy.includes(enemy.type)) continue;
+
+                    const d = Math.hypot(enemy.x - p.x, enemy.y - p.y);
+
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestTarget = enemy;
+                    }
+                }
+
+                if (bestTarget) {
+                    p.target = bestTarget;
+                    continue;
+                }
+            }
+
+            projectiles.splice(i, 1);
+            continue;
+        }
 
         const dx   = e.x - p.x;
         const dy   = e.y - p.y;
@@ -150,10 +207,37 @@ function update() {
                 updateUI();
             }
 
+            if (p.explodes) {
+                explosions.push({
+                    x: p.x,
+                    y: p.y,
+                    sprite: explosionImg,
+                    frame: 0,
+                    timer: 0
+                });
+            }
+
+
             projectiles.splice(i, 1);
         } else {
             p.x += (dx / dist) * p.speed;
             p.y += (dy / dist) * p.speed;
+        }
+    }
+
+    for (let i = explosions.length - 1; i >= 0; i--) {
+
+        const ex = explosions[i];
+
+        ex.timer++;
+
+        if (ex.timer >= 4) {
+            ex.timer = 0;
+            ex.frame++;
+        }
+
+        if (ex.frame >= 16) {
+            explosions.splice(i, 1);
         }
     }
 
@@ -230,19 +314,29 @@ function render() {
 
         let sprite = p.sprite;
 
-        if (p.type === "rocket") {
-            if (Math.floor(Date.now() / 50) % 2 === 0) {
-                sprite = projectileSprite;
-            } else {
-                sprite = projectileSpritealt;
-            }
-        }
 
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(ang);
         ctx.drawImage(sprite, -75, -75, 150, 150);
         ctx.restore();
+    }
+
+    for (const ex of explosions) {
+
+        const frameSize = 1000;
+
+        const sx = (ex.frame % 4) * frameSize;
+        const sy = Math.floor(ex.frame / 4) * frameSize;
+
+        ctx.drawImage(
+            ex.sprite,
+            sx, sy,
+            frameSize, frameSize,
+            ex.x - 75,
+            ex.y - 75,
+            150, 150
+        );
     }
 
     // 🖱️ Drag-Preview
