@@ -75,6 +75,22 @@ canvas.addEventListener("mousemove", (e) => {
     mouseY = e.clientY - rect.top;
 });
 
+let currentTrack = null;
+
+function playRandomMusic() {
+
+    if (currentTrack) {
+        currentTrack.pause();
+        currentTrack.currentTime = 0;
+    }
+
+    currentTrack = music[Math.floor(Math.random() * music.length)];
+
+    currentTrack.play();
+
+    currentTrack.onended = playRandomMusic;
+}
+
 // ===============================
 // 🔁 UPDATE
 // ===============================
@@ -153,6 +169,30 @@ function update() {
             t.angle += diff * 0.2;
 
             if (t.cooldown <= 0 && Math.hypot(dx, dy) < t.range) {
+                switch (t.type) {
+
+                    case "cannon":
+                    case "doublecannon":
+                    case "gunship":
+                        playSound(mgSound, 0.4);
+                        break;
+
+                    case "rocket":
+                    case "bigrocket":
+                    case "attackplane":
+                        playSound(rocketSound, 0.5);
+                        break;
+
+                    case "MBT":
+                        playSound(tankSound, 0.6);
+                        break;
+
+                    case "APC":
+                    case "CWIS":
+                        playSound(apcSound, 0.5);
+                        break;
+                }
+
                 projectiles.push(createProjectile(t, target));
                 t.cooldown = t.fireRate;
             }
@@ -215,6 +255,8 @@ function update() {
                     frame: 0,
                     timer: 0
                 });
+
+                playSound(explosionSound, 0.6);
             }
 
 
@@ -373,6 +415,7 @@ function loop() {
 
 loop();
 initUI();
+playRandomMusic();
 updateUI();
 updateHP();
 updateRound();
