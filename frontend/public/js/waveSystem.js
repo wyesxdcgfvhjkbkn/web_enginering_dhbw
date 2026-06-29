@@ -13,7 +13,7 @@ function pickEnemyType() {
     const {round} = window.state;
     const r = Math.random();
     if (round >= 9 && r < 0.01) return "cyborg";
-    if (round >= 6 && r < 0.10) return "stealth";
+    if (round >= 6 && r < 0.10) return "ninja";
     if (round >= 3 && r < 0.30) return "armored";
     return "soldier";
 }
