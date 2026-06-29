@@ -1,4 +1,3 @@
-
 const game = {
     started: false,
     running: false,
@@ -6,6 +5,8 @@ const game = {
     canvas: null,
     ctx: null
 };
+
+let currentTrack = null;
 
 function startGame() {
     if (game.started) {
@@ -43,6 +44,7 @@ function startGame() {
         state.towers.length = 0;
         state.enemies.length = 0;
         state.projectiles.length = 0;
+        state.explosions.length = 0;
 
         // ✅ GameOver zurücksetzen
         window._gameOver = false;
@@ -77,7 +79,7 @@ function startGame() {
         // ===============================
         // 🌍 GAME STATE
         // ===============================
-        const { enemies, towers, projectiles, hp, money, waveRunning, path } = window.state;
+        const { enemies, towers, projectiles, explosions, hp, money, waveRunning, path, priorityOrder } = window.state;
 
         // ===============================
         // 🖱️ INPUT
@@ -88,6 +90,21 @@ function startGame() {
             state.mouseX = e.clientX - rect.left;
             state.mouseY = e.clientY - rect.top;
         });
+
+        // Background Music
+        function playRandomMusic() {
+
+            if (currentTrack) {
+                currentTrack.pause();
+                currentTrack.currentTime = 0;
+            }
+
+            currentTrack = music[Math.floor(Math.random() * music.length)];
+
+            currentTrack.play();
+
+            currentTrack.onended = playRandomMusic;
+        }
 
         // ===============================
         // 🔁 UPDATE
@@ -121,26 +138,76 @@ function startGame() {
                 if (t.cooldown > 0) t.cooldown--;
 
                 let target = null;
-                let maxProgress = -1;
 
-                for (const e of enemies) {
-                    if (e.dead) continue;
-                    const d = Math.hypot(e.x - t.x, e.y - t.y);
-                    if (d < t.aimRange && e.targetIndex > maxProgress) {
-                        maxProgress = e.targetIndex;
-                        target = e;
+                for (const type of priorityOrder) {
+
+                    let best = null;
+                    let bestProgress = -1;
+
+                    for (const e of enemies) {
+
+                        if (e.dead) continue;
+                        if (e.type !== type) continue;
+                        if (!t.candestroy.includes(e.type)) continue;
+
+                        const dx = e.x - t.x;
+                        const dy = e.y - t.y;
+                        const dist = Math.hypot(dx, dy);
+
+                        if (dist > t.aimRange) continue;
+
+                        if (e.targetIndex > bestProgress) {
+                            bestProgress = e.targetIndex;
+                            best = e;
+                        }
+                    }
+
+                    if (best) {
+                        target = best;
+                        break;
                     }
                 }
 
+                // 👇 NACH der kompletten Suche
                 if (target) {
+
                     const dx = target.x - t.x;
                     const dy = target.y - t.y;
                     const angle = Math.atan2(dy, dx);
 
-                    t.angle = t.angle + (angle - t.angle) * 0.2;
+                    let diff = angle - t.angle;
+
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+
+                    t.angle += diff * 0.2;
 
                     if (t.cooldown <= 0 && Math.hypot(dx, dy) < t.range) {
-                        state.projectiles.push(createProjectile(t, target));
+                        switch (t.type) {
+
+                            case "cannon":
+                            case "doublecannon":
+                            case "gunship":
+                                playSound(mgSound, 0.4);
+                                break;
+
+                            case "rocket":
+                            case "bigrocket":
+                            case "attackplane":
+                                playSound(rocketSound, 0.5);
+                                break;
+
+                            case "MBT":
+                                playSound(tankSound, 0.6);
+                                break;
+
+                            case "APC":
+                            case "CWIS":
+                                playSound(apcSound, 0.5);
+                                break;
+                        }
+
+                        projectiles.push(createProjectile(t, target));
                         t.cooldown = t.fireRate;
                     }
                 }
@@ -149,9 +216,37 @@ function startGame() {
             // 🚀 Projectiles
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 const p = projectiles[i];
-                const e = p.target; // 🎯🎯🎯
+                const e = p.target;
 
-                if (!e || e.dead) { projectiles.splice(i, 1); continue; }
+                if (!e || e.dead) {
+
+                    if (p.type === "rocket") {
+
+                        let bestTarget = null;
+                        let bestDist = Infinity;
+
+                        for (const enemy of enemies) {
+
+                            if (enemy.dead) continue;
+                            if (!p.candestroy.includes(enemy.type)) continue;
+
+                            const d = Math.hypot(enemy.x - p.x, enemy.y - p.y);
+
+                            if (d < bestDist) {
+                                bestDist = d;
+                                bestTarget = enemy;
+                            }
+                        }
+
+                        if (bestTarget) {
+                            p.target = bestTarget;
+                            continue;
+                        }
+                    }
+
+                    projectiles.splice(i, 1);
+                    continue;
+                }
 
                 const dx = e.x - p.x;
                 const dy = e.y - p.y;
@@ -166,26 +261,54 @@ function startGame() {
                         updateUI();
                     }
 
-                    state.projectiles.splice(i, 1);
+                    if (p.explodes) {
+                        explosions.push({
+                            x: p.x,
+                            y: p.y,
+                            sprite: explosionImg,
+                            frame: 0,
+                            timer: 0
+                        });
+
+                        playSound(explosionSound, 0.6);
+                    }
+
+
+                    projectiles.splice(i, 1);
                 } else {
                     p.x += (dx / dist) * p.speed;
                     p.y += (dy / dist) * p.speed;
                 }
             }
 
-            // 🧹 Cleanup + Schaden am Spieler
-            for (let i = state.enemies.length - 1; i >= 0; i--) {
-                const e = state.enemies[i];
+            for (let i = explosions.length - 1; i >= 0; i--) {
 
-                if (e.dead) { state.enemies.splice(i, 1); continue; }
+                const ex = explosions[i];
 
-                if (e.targetIndex >= state.path.length) {
-                    state.hp -= e.damage;
-                    updateHP();
-                    state.enemies.splice(i, 1);
+                ex.timer++;
+
+                if (ex.timer >= 4) {
+                    ex.timer = 0;
+                    ex.frame++;
+                }
+
+                if (ex.frame >= 16) {
+                    explosions.splice(i, 1);
                 }
             }
 
+            // 🧹 Cleanup + Schaden am Spieler
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const e = enemies[i];
+
+                if (e.dead) { enemies.splice(i, 1); continue; }
+
+                if (e.targetIndex >= path.length) {
+                    state.hp -= e.damage;
+                    updateHP();
+                    enemies.splice(i, 1);
+                }
+            }
             // 🌊 Wave-Logik
             updateWave();
 
@@ -280,7 +403,7 @@ function startGame() {
         // ===============================
 
         function render() {
-            const { path, enemies, towers, projectiles, isDraggingTower, selectedTower, mouseX, mouseY } = window.state;
+            const { path, enemies, towers, projectiles, explosions, isDraggingTower, selectedTower, mouseX, mouseY } = window.state;
 
             const ctx = game.ctx;
             const canvas = game.canvas;
@@ -319,19 +442,29 @@ function startGame() {
 
                 let sprite = p.sprite;
 
-                if (p.type === "rocket") {
-                    if (Math.floor(Date.now() / 50) % 2 === 0) {
-                        sprite = projectileSprite;
-                    } else {
-                        sprite = projectileSpritealt;
-                    }
-                }
-
                 ctx.save();
                 ctx.translate(p.x, p.y);
                 ctx.rotate(ang);
                 ctx.drawImage(sprite, -75, -75, 150, 150);
                 ctx.restore();
+            }
+
+            // Explosions
+            for (const ex of explosions) {
+
+                const frameSize = 1000;
+
+                const sx = (ex.frame % 4) * frameSize;
+                const sy = Math.floor(ex.frame / 4) * frameSize;
+
+                ctx.drawImage(
+                    ex.sprite,
+                    sx, sy,
+                    frameSize, frameSize,
+                    ex.x - 75,
+                    ex.y - 75,
+                    150, 150
+                );
             }
 
             // 🖱️ Drag-Preview
@@ -373,6 +506,7 @@ function startGame() {
 
         loop();
         initUI();
+        playRandomMusic();
         updateUI();
         updateHP();
         updateRound();
@@ -398,6 +532,14 @@ function stopGame() {
 
     game.started = false;
     window._gameOver = false;
+
+
+    if (currentTrack) {
+        currentTrack.onended = null;
+        currentTrack.pause();
+        currentTrack.currentTime = 0;
+    }
+
 }
 
 window.stopGame = stopGame;

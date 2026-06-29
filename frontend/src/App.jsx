@@ -88,6 +88,8 @@ function Game() {
         towers: [],
         enemies: [],
         projectiles: [],
+        explosions: [],
+        priorityOrder:["cyborg", "ninja", "armored", "soldier"],
 
         path: [
           { x: 0, y: 100 },
@@ -167,20 +169,27 @@ function Game() {
       {/* 🎮 UI */}
       <div id="ui">
 
+        {/* ❤️ Lebenspunkte */}
         <div className="ui-box">
           ❤️ HP: <span id="hp">100</span>
         </div>
 
+        {/* 🎯 Aktuelle Runde */}
         <div className="ui-box">
           🎯 Runde: <span id="round">1</span>
         </div>
 
+        {/* 💰 Geld */}
         <div className="ui-box">
-          💰 Geld: <span id="money">100</span>
+          💰 Geld: <span id="money">500</span>
         </div>
 
-        <button id="startWaveButton">START</button>
+        {/* 🔴 Rundenstart */}
+        <button id="startWaveButton">
+          START
+        </button>
 
+        {/* 🛒 Shop */}
         <div className="shop-container">
 
           <div className="ui-box shop-button" id="shopButton">
@@ -189,48 +198,40 @@ function Game() {
 
           <div className="shop-panel hidden" id="shopPanel">
 
+            {/* 🏗️ Tower 1 */}
             <div className="shop-item" data-tower="cannon">
-              <img src="/assets/towerDefense_tile249.png" alt="Kanone" />
+              <img src="/assets/pictures/MG.png" alt="Kanone" />
+
               <div className="shop-text">
                 <div>Kanone</div>
                 <div className="shop-price">💰 50</div>
               </div>
             </div>
 
-            <div className="shop-item" data-tower="doublecannon">
-              <img src="/assets/towerDefense_tile250.png" alt="Doppelkanone" />
-              <div className="shop-text">
-                <div>Doppelkanone</div>
-                <div className="shop-price">💰 100</div>
-              </div>
-            </div>
-
+            {/* 🚀 Tower 2 */}
             <div className="shop-item" data-tower="rocket">
-              <img src="/assets/towerDefense_tile205.png" alt="Rakete" />
+              <img src="/assets/pictures/Raketentuk.png" alt="Rakete" />
+
               <div className="shop-text">
                 <div>Rakete</div>
                 <div className="shop-price">💰 75</div>
               </div>
             </div>
 
-            <div className="shop-item" data-tower="bigrocket">
-              <img src="/assets/towerDefense_tile206.png" alt="Große Rakete" />
-              <div className="shop-text">
-                <div>Große Rakete</div>
-                <div className="shop-price">💰 150</div>
-              </div>
-            </div>
-
           </div>
         </div>
+
       </div>
 
-      {/* 🎮 Canvas */}
+      {/* 🎮 Spielwelt */}
       <canvas id="game"></canvas>
 
-      {/* Credit */}
-      <div id="credit">
-        Assets by Kenney.nl
+      {/* 🎨 Credits */}
+      <div id="credits">
+        <div>Assets by Kenney.nl</div>
+        <div>Music by Juhani Junkala</div>
+        <div>Explosion sound by Viktor Hahn</div>
+        <div>Gun sounds by Rubberduck</div>
       </div>
 
       <div id="gameOverScreen" className="hidden">

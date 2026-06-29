@@ -29,7 +29,6 @@ body {
 
 .navbar {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
 }
 
 .navbar .btn-link {
@@ -54,10 +53,6 @@ body {
   display: flex !important;
   flex-direction: row !important;
   gap: 1rem !important;
-
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  overflow-x: auto
 }
 
 /* ✅ Farbe bei Hover */
@@ -70,6 +65,7 @@ body {
 /* ===== Container ===== */
 
 .container {
+  max-width: 900px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,8 +74,7 @@ body {
 
 /* ===== Headings ===== */
 
-h1,
-h2 {
+h1, h2 {
   font-weight: 600;
   margin-bottom: 1rem;
 }
@@ -146,8 +141,7 @@ form {
 
 /* ===== Reset ===== */
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -157,8 +151,7 @@ body {
 
 .game-wrapper {
   position: fixed;
-  top: 56px;
-  /* Höhe der Navbar (Bootstrap Standard) */
+  top: 56px; /* Höhe der Navbar (Bootstrap Standard) */
   left: 0;
   width: 100%;
   height: calc(100% - 56px);
@@ -175,143 +168,18 @@ body {
 #game {
   display: block;
 
-  aspect-ratio: 16 / 9;
+  /* füllt Container */
   width: 100%;
   height: 100%;
 
-  max-height: 100%;
-
-
-
+  /* Styling */
   background: var(--card);
+  border: none;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
 
 * {
   color: inherit;
-}
-
-/* Game Over */
-
-#gameOverScreen {
-  position: fixed;
-  top: 56px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 56px);
-  display: flex;
-
-  justify-content: center;
-  align-items: center;
-
-  background: rgba(0, 0, 0, 0);
-  z-index: 9999;
-}
-
-
-.gameover-box {
-  background: var(--card);
-  color: var(--text);
-
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  min-width: 300px;
-}
-
-#gameOverScreen button {
-  margin-top: 10px;
-  width: 100%;
-  color: var(--text);
-  background: var(--card);
-}
-
-
-.hidden {
-  display: none !important;
-}
-
-.rainbow-text {
-  font-weight: bold;
-
-  background: linear-gradient(90deg,
-      red,
-      orange,
-      yellow,
-      green,
-      cyan,
-      blue,
-      violet,
-      red);
-
-  background-size: 300%;
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  animation: rainbowMove 3s linear infinite;
-}
-
-@keyframes rainbowMove {
-  0% {
-    background-position: 0%;
-  }
-
-  100% {
-    background-position: 300%;
-  }
-}
-
-/*Alert*/
-
-.logout-toast {
-  position: fixed;
-  top: 70px;
-  /* unter Navbar */
-  left: 50%;
-  transform: translateX(-50%);
-
-  background: #198754;
-  /* Bootstrap success */
-  color: white;
-
-  padding: 10px 20px;
-  border-radius: 8px;
-
-  z-index: 9999;
-  /* über allem */
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-
-  pointer-events: none;
-
-  opacity: 0;
-
-  animation: fadeOnly 3s ease forwards;
-
-}
-
-@keyframes fadeOnly {
-  0% {
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  90% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
 }
 
 
@@ -320,17 +188,17 @@ body,
 ===================================== */
 
 #ui {
-  position: absolute;
+    position: absolute;
 
-  top: 10px;
-  right: 10px;
+    top: 65px;
+    right: 10px;
 
-  z-index: 100;
+    z-index: 100;
 
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-  gap: 8px;
+    gap: 8px;
 }
 
 
@@ -340,19 +208,19 @@ body,
 
 .ui-box {
 
-  min-width: 150px;
+    min-width: 150px;
 
-  padding: 10px 14px;
+    padding: 10px 14px;
 
-  color: white;
+    color: white;
 
-  background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.7);
 
-  border-radius: 8px;
+    border-radius: 8px;
 
-  border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.15);
 
-  user-select: none;
+    user-select: none;
 }
 
 
@@ -362,32 +230,32 @@ body,
 
 #startWaveButton {
 
-  min-width: 150px;
+    min-width: 150px;
 
-  padding: 12px;
+    padding: 12px;
 
-  border: none;
+    border: none;
 
-  border-radius: 8px;
+    border-radius: 8px;
 
-  font-size: 16px;
-  font-weight: bold;
+    font-size: 16px;
+    font-weight: bold;
 
-  cursor: pointer;
+    cursor: pointer;
 
-  color: white;
+    color: white;
 
-  background: rgb(180, 30, 30);
+    background: rgb(180, 30, 30);
 
-  transition: 0.15s;
+    transition: 0.15s;
 }
 
 #startWaveButton:hover {
-  background: rgb(220, 40, 40);
+    background: rgb(220, 40, 40);
 }
 
 #startWaveButton:active {
-  transform: scale(0.97);
+    transform: scale(0.97);
 }
 
 
@@ -396,7 +264,7 @@ body,
 ===================================== */
 
 .shop-container {
-  position: relative;
+    position: relative;
 }
 
 
@@ -406,14 +274,14 @@ body,
 
 .shop-button {
 
-  cursor: pointer;
+    cursor: pointer;
 
-  transition: 0.15s;
+    transition: 0.15s;
 }
 
 .shop-button:hover {
 
-  background: rgba(40, 40, 40, 0.9);
+    background: rgba(40, 40, 40, 0.9);
 }
 
 
@@ -423,23 +291,31 @@ body,
 
 .shop-panel {
 
-  margin-top: 6px;
+    margin-top: 6px;
 
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-  gap: 6px;
+    gap: 6px;
 
-  padding: 8px;
+    padding: 8px;
 
-  background: rgba(0, 0, 0, 0.85);
+    background: rgba(0,0,0,0.85);
 
-  border-radius: 8px;
+    border-radius: 8px;
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1);
 
-  min-width: 220px;
+    min-width: 220px;
 }
+
+
+/* versteckt */
+
+.hidden {
+    display: none;
+}
+
 
 /* =====================================
    🏗️ SHOP ITEM
@@ -447,26 +323,26 @@ body,
 
 .shop-item {
 
-  display: flex;
+    display: flex;
 
-  align-items: center;
+    align-items: center;
 
-  gap: 10px;
+    gap: 10px;
 
-  padding: 8px;
+    padding: 8px;
 
-  border-radius: 6px;
+    border-radius: 6px;
 
-  cursor: grab;
+    cursor: grab;
 
-  background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
 
-  transition: 0.15s;
+    transition: 0.15s;
 }
 
 .shop-item:hover {
 
-  background: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.15);
 }
 
 
@@ -476,12 +352,12 @@ body,
 
 .shop-item img {
 
-  width: 50px;
-  height: 50px;
+    width: 50px;
+    height: 50px;
 
-  image-rendering: pixelated;
+    image-rendering: pixelated;
 
-  flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 
@@ -491,13 +367,13 @@ body,
 
 .shop-text {
 
-  display: flex;
+    display: flex;
 
-  flex-direction: column;
+    flex-direction: column;
 
-  gap: 2px;
+    gap: 2px;
 
-  color: white;
+    color: white;
 }
 
 
@@ -505,9 +381,9 @@ body,
 
 .shop-price {
 
-  color: gold;
+    color: gold;
 
-  font-size: 13px;
+    font-size: 13px;
 }
 
 
@@ -515,24 +391,20 @@ body,
    🎨 CREDIT
 ===================================== */
 
-#credits {
+#credit {
 
-  position: absolute;
+    position: absolute;
 
-  left: 10px;
-  bottom: 10px;
+    left: 10px;
+    bottom: 10px;
 
-  z-index: 100;
+    z-index: 100;
 
-  color: rgba(255, 255, 255, 0.5);
+    color: rgba(255,255,255,0.5);
 
-  font-size: 12px;
+    font-size: 12px;
 
-  user-select: none;
-
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+    user-select: none;
 }
 
 
@@ -542,25 +414,25 @@ body,
 
 @media (max-width: 768px) {
 
-  #ui {
+    #ui {
 
-    top: 5px;
-    right: 5px;
+        top: 5px;
+        right: 5px;
 
-    gap: 5px;
-  }
+        gap: 5px;
+    }
 
-  .ui-box {
-    min-width: 120px;
-    font-size: 14px;
-  }
+    .ui-box {
+        min-width: 120px;
+        font-size: 14px;
+    }
 
-  #startWaveButton {
-    min-width: 120px;
-    font-size: 14px;
-  }
+    #startWaveButton {
+        min-width: 120px;
+        font-size: 14px;
+    }
 
-  .shop-panel {
-    min-width: 180px;
-  }
+    .shop-panel {
+        min-width: 180px;
+    }
 }
