@@ -1,0 +1,595 @@
+/* ===== Theme Variablen ===== */
+
+:root {
+  --bg: #f5f5f5;
+  --text: #1a1a1a;
+  --card: #ffffff;
+  --border: #ddd;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --text: #eaeaea;
+  --card: #1e1e1e;
+  --border: #444;
+}
+
+/* ===== Global ===== */
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* ===== Navbar ===== */
+
+.navbar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.navbar .btn-link {
+  text-decoration: none;
+}
+
+.navbar a {
+  font-weight: 400 !important;
+}
+
+.navbar .btn {
+  font-weight: 400 !important;
+  transition: color 0.2s ease;
+}
+
+.navbar-brand {
+  font-weight: 500 !important;
+}
+
+.navbar .navbar-nav {
+  align-items: center;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 1rem !important;
+
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto
+}
+
+/* ✅ Farbe bei Hover */
+.navbar .btn-link:hover {
+  color: #0d6efd !important;
+}
+
+
+
+/* ===== Container ===== */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+/* ===== Headings ===== */
+
+h1,
+h2 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* ===== Forms ===== */
+
+form {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  color: var(--text);
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin: 0 auto;
+}
+
+/* Inputs */
+
+.form-control {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.form-control::placeholder {
+  color: #888;
+}
+
+.form-control:focus {
+  background-color: var(--card);
+  border-color: #0d6efd;
+  box-shadow: none;
+  color: var(--text);
+}
+
+/* ===== Buttons ===== */
+
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* ===== Tabellen ===== */
+
+.table {
+  background-color: var(--card);
+  color: var(--text);
+}
+
+.table th {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+/* ===== Liste ===== */
+
+.list-group-item {
+  background-color: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+
+/* ===== Reset ===== */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* ===== 🏠 HOME WELCOME ===== */
+
+.home-container {
+  all: unset;
+  /* reset verhindert Container-Einflüsse */
+  min-height: calc(100vh - 56px);
+  /* volle Höhe unter Navbar */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.home-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+
+  margin: 0 auto;
+  padding: 40px;
+  border-radius: 16px;
+
+  max-width: 600px;
+  width: 90%;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Game Container ===== */
+
+.game-wrapper {
+  position: fixed;
+  top: 56px;
+  /* Höhe der Navbar (Bootstrap Standard) */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 56px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--bg);
+}
+
+/* ===== Canvas ===== */
+
+#game {
+  display: block;
+
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: 100%;
+
+  max-height: 100%;
+
+
+
+  background: var(--card);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+* {
+  color: inherit;
+}
+
+/* Game Over */
+
+#gameOverScreen {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 56px);
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0);
+  z-index: 9999;
+}
+
+
+.gameover-box {
+  background: var(--card);
+  color: var(--text);
+
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 300px;
+}
+
+#gameOverScreen button {
+  margin-top: 10px;
+  width: 100%;
+  color: var(--text);
+  background: var(--card);
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+.rainbow-text {
+  font-weight: bold;
+
+  background: linear-gradient(90deg,
+      red,
+      orange,
+      yellow,
+      green,
+      cyan,
+      blue,
+      violet,
+      red);
+
+  background-size: 300%;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: rainbowMove 3s linear infinite;
+}
+
+@keyframes rainbowMove {
+  0% {
+    background-position: 0%;
+  }
+
+  100% {
+    background-position: 300%;
+  }
+}
+
+/*Alert*/
+
+.logout-toast {
+  position: fixed;
+  top: 70px;
+  /* unter Navbar */
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: #198754;
+  /* Bootstrap success */
+  color: white;
+
+  padding: 10px 20px;
+  border-radius: 8px;
+
+  z-index: 9999;
+  /* über allem */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+
+  pointer-events: none;
+
+  opacity: 0;
+
+  animation: fadeOnly 3s ease forwards;
+
+}
+
+@keyframes fadeOnly {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+
+/* =====================================
+   🧭 UI LAYER
+===================================== */
+
+#ui {
+  position: absolute;
+
+  top: 10px;
+  right: 10px;
+
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+/* =====================================
+   📦 STANDARD UI BOX
+===================================== */
+
+.ui-box {
+
+  min-width: 150px;
+
+  padding: 10px 14px;
+
+  color: white;
+
+  background: rgba(0, 0, 0, 0.7);
+
+  border-radius: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  user-select: none;
+}
+
+
+/* =====================================
+   🔴 START BUTTON
+===================================== */
+
+#startWaveButton {
+
+  min-width: 150px;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  color: white;
+
+  background: rgb(180, 30, 30);
+
+  transition: 0.15s;
+}
+
+#startWaveButton:hover {
+  background: rgb(220, 40, 40);
+}
+
+#startWaveButton:active {
+  transform: scale(0.97);
+}
+
+
+/* =====================================
+   🛒 SHOP
+===================================== */
+
+.shop-container {
+  position: relative;
+}
+
+
+/* =====================================
+   🛒 SHOP BUTTON
+===================================== */
+
+.shop-button {
+
+  cursor: pointer;
+
+  transition: 0.15s;
+}
+
+.shop-button:hover {
+
+  background: rgba(40, 40, 40, 0.9);
+}
+
+
+/* =====================================
+   📂 SHOP PANEL
+===================================== */
+
+.shop-panel {
+
+  margin-top: 6px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 8px;
+
+  background: rgba(0, 0, 0, 0.85);
+
+  border-radius: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  min-width: 220px;
+}
+
+/* =====================================
+   🏗️ SHOP ITEM
+===================================== */
+
+.shop-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 8px;
+
+  border-radius: 6px;
+
+  cursor: grab;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  transition: 0.15s;
+}
+
+.shop-item:hover {
+
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+/* =====================================
+   🖼️ TOWER ICONS
+===================================== */
+
+.shop-item img {
+
+  width: 50px;
+  height: 50px;
+
+  image-rendering: pixelated;
+
+  flex-shrink: 0;
+}
+
+
+/* =====================================
+   📝 SHOP TEXT
+===================================== */
+
+.shop-text {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  color: white;
+}
+
+
+/* Preis */
+
+.shop-price {
+
+  color: gold;
+
+  font-size: 13px;
+}
+
+
+/* =====================================
+   🎨 CREDIT
+===================================== */
+
+#credits {
+
+  position: absolute;
+
+  left: 10px;
+  bottom: 10px;
+
+  z-index: 100;
+
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 12px;
+
+  user-select: none;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+
+/* =====================================
+   📱 MOBILE SUPPORT
+===================================== */
+
+@media (max-width: 768px) {
+
+  #ui {
+
+    top: 5px;
+    right: 5px;
+
+    gap: 5px;
+  }
+
+  .ui-box {
+    min-width: 120px;
+    font-size: 14px;
+  }
+
+  #startWaveButton {
+    min-width: 120px;
+    font-size: 14px;
+  }
+
+  .shop-panel {
+    min-width: 180px;
+  }
+}
