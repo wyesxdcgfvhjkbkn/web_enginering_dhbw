@@ -38,7 +38,6 @@ Startseite
 Login
 Registrierung
 Highscores
-Maps
 
 
 Theme-Umschaltung (Hell/Dunkel)
@@ -92,7 +91,7 @@ Navigation wird zurückgesetzt
 5.1 Integration in React
 Das Spiel wurde als Canvas-Anwendung in React integriert.
 Umsetzung:
-JSXfunction Game() {  useEffect(() => {    startGame();  }, []);  return <canvas id="game"></canvas>;}Weitere Zeilen anzeigen
+JSXfunction Game() {  useEffect(() => {    startGame();  }, []);  return <canvas id="game"></canvas>;}
 
 5.2 Anpassung von game.js
 Das ursprüngliche Spiel wurde angepasst, um kompatibel mit React zu sein.
@@ -101,20 +100,20 @@ Wichtig:
 Kein direkter Start beim Laden
 Startfunktion:
 
-JavaScriptexport function startGame() {  const canvas = document.getElementById("game");  const ctx = canvas.getContext("2d");  // Spiel-Logik}Weitere Zeilen anzeigen
+JavaScriptexport function startGame() {  const canvas = document.getElementById("game");  const ctx = canvas.getContext("2d");  // Spiel-Logik}
 
 5.3 Fullscreen-Darstellung
 Das Spiel wird im Vollbildmodus unterhalb der Navbar dargestellt.
 CSS:
-CSS.game-wrapper {  position: fixed;  top: 56px;  width: 100%;  height: calc(100% - 56px);}``Weitere Zeilen anzeigen
+CSS.game-wrapper {  position: fixed;  top: 56px;  width: 100%;  height: calc(100% - 56px);}
 
 6. Theme-System
 Die Anwendung unterstützt ein Hell- und Dunkel-Theme.
 6.1 Umsetzung
 Verwendung von CSS-Variablen:
-CSS:root {  --bg: #ffffff;  --text: #000000;}[data-theme="dark"] {  --bg: #121212;  --text: #eaeaea;}Weitere Zeilen anzeigen
+CSS:root {  --bg: #ffffff;  --text: #000000;}[data-theme="dark"] {  --bg: #121212;  --text: #eaeaea;}
 6.2 Umschaltung
-JavaScriptdocument.documentElement.setAttribute("data-theme", newTheme);localStorage.setItem("theme", newTheme);Weitere Zeilen anzeigen
+JavaScriptdocument.documentElement.setAttribute("data-theme", newTheme);localStorage.setItem("theme", newTheme);
 6.3 Speicherung
 Das gewählte Theme wird im localStorage gespeichert und beim Start geladen.
 
@@ -135,7 +134,7 @@ Tablet
 Smartphone
 
 Beispiel:
-HTML<div class="col-12 col-md-6"></div>Weitere Zeilen anzeigen
+HTML<div class="col-12 col-md-6"></div>
 
 9. Besondere Herausforderungen
 9.1 Integration von Canvas in React
