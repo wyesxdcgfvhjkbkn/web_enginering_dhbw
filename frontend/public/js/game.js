@@ -68,9 +68,6 @@ function startGame() {
             return;
         }
 
-        const canvas = document.getElementById("game");
-        const ctx = game.canvas.getContext("2d");
-
         const rect = game.canvas.getBoundingClientRect();
 
         game.canvas.width = rect.width;
@@ -85,13 +82,15 @@ function startGame() {
         // 🖱️ INPUT
         // ===============================
 
-        canvas.addEventListener("mousemove", (e) => {
-            const rect = canvas.getBoundingClientRect();
+        game.canvas.addEventListener("mousemove", (e) => {
+            const rect = game.canvas.getBoundingClientRect();
             state.mouseX = e.clientX - rect.left;
             state.mouseY = e.clientY - rect.top;
         });
 
-        // Background Music
+        // ===============================
+        // 🎵 MUSIK
+        // ===============================
         function playRandomMusic() {
 
             if (currentTrack) {

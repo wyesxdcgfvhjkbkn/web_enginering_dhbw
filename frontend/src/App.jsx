@@ -24,8 +24,6 @@ export default function App() {
         return <Profile user={user} />;
       case "highscores":
         return <Highscores />;
-      case "maps":
-        return <Maps />;
       case "game":
         return <Game />;
       default:
@@ -68,7 +66,7 @@ function Game() {
 
   useEffect(() => {
 
-    // ✅ STATE IMMER SETZEN (nicht nur im if!)
+    // ✅ STATE SETZEN
     if (!window.state) {
       window.state = {
         waveRunning: false,
@@ -325,12 +323,6 @@ function Navbar({ setPage, user, setUser, setMessage }) {
           <li>
             <button className="btn btn-link text-white" onClick={() => setPage("highscores")}>
               Highscores
-            </button>
-          </li>
-
-          <li>
-            <button className="btn btn-link text-white" onClick={() => setPage("maps")}>
-              Maps
             </button>
           </li>
 
@@ -695,26 +687,6 @@ function Highscores() {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-//////////////////////////////////////////////////////
-
-function Maps() {
-  const maps = ["Map 1", "Map 2"];
-
-  return (
-    <div>
-      <h2>Maps</h2>
-      <ul className="list-group">
-        {maps.map((map, i) => (
-          <li key={i} className="list-group-item">
-            {map}
-          </li>
-        ))}
-      </ul>
-      <button className="btn btn-primary mt-3">Neue Map</button>
     </div>
   );
 }
