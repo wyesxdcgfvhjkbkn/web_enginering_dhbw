@@ -153,6 +153,35 @@ body {
   height: 100%;
 }
 
+/* ===== 🏠 HOME WELCOME ===== */
+
+.home-container {
+  all: unset;
+  /* reset verhindert Container-Einflüsse */
+  min-height: calc(100vh - 56px);
+  /* volle Höhe unter Navbar */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.home-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+
+  margin: 0 auto;
+  padding: 40px;
+  border-radius: 16px;
+
+  max-width: 600px;
+  width: 90%;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
 /* ===== Game Container ===== */
 
 .game-wrapper {

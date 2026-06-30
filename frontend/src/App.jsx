@@ -87,7 +87,7 @@ function Game() {
         enemies: [],
         projectiles: [],
         explosions: [],
-        priorityOrder:["cyborg", "ninja", "armored", "soldier"],
+        priorityOrder: ["cyborg", "ninja", "armored", "soldier"],
 
         path: [
           { x: 0, y: 100 },
@@ -342,16 +342,20 @@ function Navbar({ setPage, user, setUser, setMessage }) {
 
 function Home({ setPage }) {
   return (
-    <div>
-      <h1>Willkommen</h1>
-      <p>Tower Defense Game</p>
+    <div className="home-container">
+      <div className="home-box">
+        <h1>Willkommen zum Tower Defense Spiel</h1>
+        <p>
+          Baue deine Verteidigung auf, besiege Wellen von Gegnern und erreiche den höchsten Highscore!
+        </p>
+        <button
+          className="btn btn-primary"
+          onClick={() => setPage("game")}
+        >
+          Spiel starten
+        </button>
+      </div>
 
-      <button
-        className="btn btn-primary"
-        onClick={() => setPage("game")}
-      >
-        Spiel starten
-      </button>
     </div>
   );
 }
