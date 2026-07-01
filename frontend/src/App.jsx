@@ -5,7 +5,11 @@ export default function App() {
   const initialPage = params.get("page") || "home";
 
   const [page, setPage] = useState(initialPage);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
+
   const [message, setMessage] = useState("");
 
   // ✅ Theme laden
